@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
+
 const Signup = () => {
   //Initialize instance with AWS cognito user pool data
   const userPool = new CognitoUserPool(pooldetails);
@@ -55,7 +56,10 @@ const Signup = () => {
       attributeValues.password,
       attributeList,
       null,
+
+
       function (err, result) {
+
         if (err) {
           toast.error(err.message);
           //   if (err.code === "UsernameExistsException") {
@@ -76,13 +80,19 @@ const Signup = () => {
           //       "Password did not match requirement. Please check password criteria and try again."
           //     );
           //   }
-        } else {
+        }
+        else{
+
+          const userDetails=result.user;
+          localStorage.setItem('username', userDetails.username);
+
           toast.success(
             "User registered succesfully and account veification link send on the given email id.Please verify account before login"
           );
-          navigate("/signin");
+          navigate("/verifyaccount");
         }
       }
+
     );
   };
 

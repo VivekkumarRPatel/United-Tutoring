@@ -7,6 +7,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Footer from './components/Footer/Footer';
 import { toast ,ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Verifyaccount from './components/usermanagement/Verifyaccount/Verifyaccount';
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
             <Route path="/" element={<Signup />}></Route>
             <Route path="/signup" element={<Signup />}></Route>
             <Route path="/signin" element={<Signin />}></Route>
+            <Route path="/verifyaccount" element={<Verifyaccount />}></Route>
+            
           </Routes>
         </div>
         <Footer/>

@@ -5,74 +5,62 @@ import {
   CognitoUserPool,
   CognitoUserAttribute,
   CognitoUser,
-  AuthenticationDetails,
+  AuthenticationDetails
 } from "amazon-cognito-identity-js";
 import pooldetails from "../pooldata.json";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
+
+
 const Signin = () => {
-  //Initialize instance with AWS cognito user pool data
-  const userPool = new CognitoUserPool(pooldetails);
   //   AWS.config.update({
   //     region: 'us-east-1'
   // });
   const navigate = useNavigate();
 
-  const onsubmit = (values) => {
-    console.log(values);
-  };
 
-  const registerUser = (attributeValues) => {
-    console.log(attributeValues.usertype.toString());
+  const authenticateUser = (attributeValues) => {
 
-    const attributeList = [
-      new CognitoUserAttribute({
-        Name: "family_name",
-        Value: attributeValues.lastname,
-      }),
-      new CognitoUserAttribute({
-        Name: "given_name",
-        Value: attributeValues.firstname,
-      }),
-      new CognitoUserAttribute({
-        Name: "email",
-        Value: attributeValues.email,
-      }),
-      new CognitoUserAttribute({
-        Name: "phone_number",
-        Value: attributeValues.mobileno,
-      }),
-      new CognitoUserAttribute({
-        Name: "custom:user_type",
-        Value: attributeValues.usertype.toString(),
-      }),
-    ];
+    console.log(attributeValues.email);
+   
+   //Initialize instance with AWS cognito user pool data
+   const userPool = new CognitoUserPool(pooldetails);
+   
+    const cognitoUser = new CognitoUser({ Username: attributeValues.email, Pool: userPool });
+  
+    //Set credential user has entered in AWS authentication details object
+    const authenticationDetails = new AuthenticationDetails({
+      Username: attributeValues.email,
+      Password: attributeValues.password,
+    });
 
-    userPool.signUp(
-      attributeValues.email,
-      attributeValues.password,
-      attributeList,
-      null,
-      function (err, result) {
-        if (err) {
-          toast.error(err.message);
-        } else {
-          toast.success(
-            "User registered succesfully and account veification link send on the given email id.Please verify account before login"
-          );
-          navigate("/signin");
-        }
+    cognitoUser.authenticateUser(authenticationDetails, {
+      onSuccess: function (result) {
+
+        toast.success(
+          "User logged in succesfully."
+        );
+        // console.log('access token + ' + result.getAccessToken().getJwtToken());
+        // console.log('id token + ' + result.getIdToken().getJwtToken());
+        // console.log('refresh token + ' + result.getRefreshToken().getToken());
+        // response.send("success");
+      },
+      onFailure: function (err) {
+        toast.error(err.message);
       }
-    );
+    })
+
+
+
   };
 
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={validator}
-      onSubmit={registerUser}
+      onSubmit={authenticateUser}
     >
       {(formik) => {
         const {
@@ -149,7 +137,7 @@ const validator = Yup.object().shape({
   email: Yup.string()
     .required("Email is required")
     .email("Invalid Email Address"),
-password:Yup.string().required("password is required")
+  password: Yup.string().required("password is required")
 });
 
 const initialValues = {
