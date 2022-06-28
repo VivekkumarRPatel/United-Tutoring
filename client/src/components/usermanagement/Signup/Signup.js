@@ -62,24 +62,6 @@ const Signup = () => {
 
         if (err) {
           toast.error(err.message);
-          //   if (err.code === "UsernameExistsException") {
-          //     //errPayload.message = "User exists. Please try to Login.";
-          //     toast.error(
-          //     err.message
-          //     );
-          //   } else if (err.code === "InvalidParameterException") {
-          //     // errPayload.message =
-          //     //   "Add country code to phone number. Example: +1 for Canada";
-          //     toast.error(
-          //       "Add country code to phone number. Example: +1 for Canada"
-          //     );
-          //   } else if (err.code === "InvalidPasswordException") {
-          //     //     errPayload.message =
-          //     //       "Password did not match requirement. Please check password criteria and try again.";
-          //     toast.error(
-          //       "Password did not match requirement. Please check password criteria and try again."
-          //     );
-          //   }
         }
         else{
 

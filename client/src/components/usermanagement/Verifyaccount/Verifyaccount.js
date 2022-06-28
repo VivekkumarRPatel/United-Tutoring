@@ -41,21 +41,44 @@ const Verifyaccount = () => {
             attributeValues.code,
             true,
             function (err, result) {
-                if (err) {
-                    toast.error(
-                        err.messsage
-                    );
-                } else {
+                if (result == "SUCCESS") {
+
+                    const successMessage = result.message;
                     toast.success(
-                        result.messsage
+                        successMessage
                     );
                     navigate("/signin");
+                } else {
+                    const erroMessage = err.message;
+                    toast.error(
+                        erroMessage
+                    );
                 }
             }
         );
     }
 
 
+    function resendCode (e){
+        e.preventDefault();
+        console.log("inside resend code");
+        const userPool = new CognitoUserPool(pooldetails);
+        const cognitoUser = new CognitoUser({ Username: username, Pool: userPool });
+
+        cognitoUser.resendConfirmationCode(function (err, result) {
+            console.log(err);
+            console.log(result);
+            if (result == "SUCCESS") {
+                const successMessage = result.message;
+                toast.success("Verification code resend successfully");
+            } else {
+                const errMessage = err.message;
+                toast.error("Error while sending verification code");
+            }
+
+        });
+
+    }
 
     return (
         <Formik
@@ -116,7 +139,7 @@ const Verifyaccount = () => {
                                     <small class="error">{errors.code}</small>
                                 ) : null}
                             </div>
-
+                            <small><a href="#" onClick={resendCode}>Resend verification code</a></small>
                             <center>
                                 <button
                                     type="submit"
@@ -149,3 +172,12 @@ const initialValues = {
 };
 
 export default Verifyaccount;
+
+
+
+// onClick={event => {formik.resetForm({
+//     values: {
+//         email: username,
+//         code: ''
+//     }
+// }); resendCode(); }}

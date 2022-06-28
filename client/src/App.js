@@ -8,6 +8,7 @@ import Footer from './components/Footer/Footer';
 import { toast ,ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Verifyaccount from './components/usermanagement/Verifyaccount/Verifyaccount';
+import Dashboard from './components/Dashboard/Dashboard';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="/signup" element={<Signup />}></Route>
             <Route path="/signin" element={<Signin />}></Route>
             <Route path="/verifyaccount" element={<Verifyaccount />}></Route>
+            <Route path="/dashboard" element={<Dashboard />}></Route>
             
           </Routes>
         </div>

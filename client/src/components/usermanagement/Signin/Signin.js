@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 
 
 
+
 const Signin = () => {
   //   AWS.config.update({
   //     region: 'us-east-1'
@@ -42,6 +43,7 @@ const Signin = () => {
         toast.success(
           "User logged in succesfully."
         );
+        navigate("/dashboard");
         // console.log('access token + ' + result.getAccessToken().getJwtToken());
         // console.log('id token + ' + result.getIdToken().getJwtToken());
         // console.log('refresh token + ' + result.getRefreshToken().getToken());
