@@ -1,6 +1,4 @@
 const Dashboard=()=>{
-
-
     return (
         <h1>User logged in succesfully</h1>
     );

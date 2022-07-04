@@ -44,6 +44,7 @@ const Verifyaccount = () => {
                 if (result == "SUCCESS") {
 
                     const successMessage = result.message;
+                    localStorage.removeItem('username');
                     toast.success(
                         successMessage
                     );

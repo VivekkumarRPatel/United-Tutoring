@@ -25,12 +25,12 @@ const Signin = () => {
   const authenticateUser = (attributeValues) => {
 
     console.log(attributeValues.email);
-   
-   //Initialize instance with AWS cognito user pool data
-   const userPool = new CognitoUserPool(pooldetails);
-   
+
+    //Initialize instance with AWS cognito user pool data
+    const userPool = new CognitoUserPool(pooldetails);
+
     const cognitoUser = new CognitoUser({ Username: attributeValues.email, Pool: userPool });
-  
+
     //Set credential user has entered in AWS authentication details object
     const authenticationDetails = new AuthenticationDetails({
       Username: attributeValues.email,
@@ -39,10 +39,15 @@ const Signin = () => {
 
     cognitoUser.authenticateUser(authenticationDetails, {
       onSuccess: function (result) {
-
+        var userType = result.idToken.payload["custom:user_type"];
+        var email = result.idToken.payload.email;
+        console.log("value of the token is" + result.getIdToken().getJwtToken());
+        localStorage.setItem('token', result.getIdToken().getJwtToken());
+        localStorage.setItem('username', result.idToken.payload.email);
         toast.success(
           "User logged in succesfully."
         );
+      //  window.location.href = '/dashboard';
         navigate("/dashboard");
         // console.log('access token + ' + result.getAccessToken().getJwtToken());
         // console.log('id token + ' + result.getIdToken().getJwtToken());
@@ -117,7 +122,11 @@ const Signin = () => {
                   <small class="error">{errors.password}</small>
                 ) : null}
               </div>
-
+              
+              <small class="form-text text-muted">
+              <a href="/forgetpassword">  Forget password.</a>
+              </small>
+              
               <center>
                 <button
                   type="submit"
