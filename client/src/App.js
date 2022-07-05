@@ -16,6 +16,7 @@ import Tutor from './components/Tutor/Tutor';
 import Student from './components/Student/Student';
 import Forgetpassword from './components/usermanagement/Forgetpassword/Forgetpassword';
 import Resetpassword from './components/usermanagement/Resetpassword/Resetpassword';
+import Profile from './components/Profile/Profile';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
               <Route path="/home" element={<Home />}></Route>
               <Route path="/tutor" element={<Tutor />}></Route>
               <Route path="/student" element={<Student />}></Route>
+              <Route path="/profile" element={<Profile />}></Route>
 
             </Route>
           </Routes>

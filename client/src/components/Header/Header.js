@@ -15,7 +15,7 @@ const Header = () => {
     console.log("inside signout");
 
     const userPool = new CognitoUserPool(pooldetails);
-    
+
 
     var userDetails = {
       Username: localStorage.getItem('username'),
@@ -27,6 +27,12 @@ const Header = () => {
     cognitoUser.signOut();
     localStorage.removeItem('username');
     localStorage.removeItem('token');
+    if (localStorage.getItem('tutor')) {
+      localStorage.removeItem('tutor');
+    }
+    if (localStorage.getItem('student')) {
+      localStorage.removeItem('student');
+    }
     toast.success("User signout successfully");
     navigate("/signin");
   }
@@ -85,7 +91,7 @@ const Header = () => {
               class="dropdown-menu dropdown-menu-md-right"
               aria-labelledby="navbarDropdown"
             >
-              <a class="dropdown-item" href="/userprofile">
+              <a class="dropdown-item" href="/profile">
                 Profile
               </a>
               <a onClick={signout} class="dropdown-item">
@@ -95,6 +101,24 @@ const Header = () => {
           </li>
         </ul>
           : null}
+
+        {localStorage.getItem('tutor') !== null ? <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/tutor">
+              Tutor
+            </a>
+          </li>
+        </ul> : null}
+
+        {localStorage.getItem('student') !== null ? <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/student">
+              Student
+            </a>
+          </li>
+        </ul> : null}
+
+
 
       </div>
     </nav>

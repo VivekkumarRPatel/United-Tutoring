@@ -39,7 +39,22 @@ const Signin = () => {
 
     cognitoUser.authenticateUser(authenticationDetails, {
       onSuccess: function (result) {
+        //get user type
         var userType = result.idToken.payload["custom:user_type"];
+        if(userType.indexOf(',')!=-1){
+          localStorage.setItem('tutor', "tutor");
+          localStorage.setItem('student', "student");
+        }else{
+
+          if(userType==="tutor"){
+            localStorage.setItem('tutor', "tutor");
+          }else{
+            localStorage.setItem('student', "student");
+          }
+        }
+
+
+
         var email = result.idToken.payload.email;
         console.log("value of the token is" + result.getIdToken().getJwtToken());
         localStorage.setItem('token', result.getIdToken().getJwtToken());
