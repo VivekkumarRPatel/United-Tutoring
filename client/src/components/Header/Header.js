@@ -7,8 +7,24 @@ import {
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 const Header = () => {
-
+  const api = 'https://b30b41k856.execute-api.us-east-1.amazonaws.com/dev/get-profile-img?id='+localStorage.getItem('username');
+  axios
+  .get(api, {
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    },
+    crossDomain: true
+  })
+  .then((response) => {
+    console.log("res:"+response.data);
+    localStorage.setItem('profile-img',response.data);
+    
+  })
+  .catch((error) => {
+    console.log(error);
+  });
   const navigate = useNavigate();
 
   const signout = () => {
@@ -84,7 +100,15 @@ const Header = () => {
               aria-expanded="true"
             >
               <img
-                alt="profilpic"
+              style={{
+                alignSelf: 'center',
+                height: 100,
+                width: 100,
+                borderWidth: 1,
+                borderRadius: 75
+              }}
+                alt=""
+                src={localStorage.getItem('profile-img')}
               />
             </a>
             <div

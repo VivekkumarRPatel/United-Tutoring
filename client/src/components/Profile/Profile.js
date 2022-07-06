@@ -3,7 +3,7 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import CreatableSelect from 'react-select/creatable';
 import React, { useState } from 'react';
-
+import axios from 'axios';
 //https://react-select.com/home
 
 let skillvalues = [
@@ -401,18 +401,92 @@ const Profile = () => {
   const [profilePic, setProfilePic] = useState([]);
 
   const tutorSubmit = (values) => {
+    let skillStr = "";
     console.log("tutor" + values.desc);
-    console.log(skills)
+    skills.forEach(skill => {
+      skillStr = skillStr + skill.value + ",";
+    });
+    skillStr = skillStr.slice(0, -1);
+    //console.log(skills[0].value)
+    console.log(values.fieldExperience)
+    const api = 'https://1apdq3a4q0.execute-api.us-east-1.amazonaws.com/dev/savestudentdetails';
+    const data = {
+      "userType" : localStorage.getItem('userType'),
+      "email" : localStorage.getItem('username'),
+      "skills" :skillStr,
+      "expyears" : values.fieldExperience,
+      "expdesc" : values.desc
+    };
+    axios
+      .post(api, data, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      .then((response) => {
+        console.log("res:"+response);
+        
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   const studentSubmit = (values) => {
     console.log("student" + values.university);
     console.log(courses);
+    let courseStr = "";
+    courses.forEach(course => {
+      courseStr = courseStr + course.value + ",";
+    });
+    courseStr = courseStr.slice(0, -1);
+    const api = 'https://1apdq3a4q0.execute-api.us-east-1.amazonaws.com/dev/savestudentdetails';
+    const data = {
+      "userType" : localStorage.getItem('userType'),
+      "email" : localStorage.getItem('username'),
+      "university" : values.university,
+      "program" : values.program,
+      "courses" : courseStr,
+      "startyear" : values.startYear,
+      "endyear" : values.endYear
+    };
+    axios
+      .post(api, data, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        crossDomain: true
+      })
+      .then((response) => {
+        console.log("res:"+response);
+        
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   const generalSubmit = (values) => {
-    console.log("general" + values);
     console.log(profilePic)
+    const api = 'https://2qc0kol8wa.execute-api.us-east-1.amazonaws.com/default/upload-to-s3';
+    const data = {
+      "file" : profilePic,
+      "email" : localStorage.getItem('username')
+    };
+    axios
+      .post(api, data, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+      })
+      .then((response) => {
+        console.log("res:\n"+response.data.file);
+        localStorage.setItem('img',response.data.file);
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   return (
