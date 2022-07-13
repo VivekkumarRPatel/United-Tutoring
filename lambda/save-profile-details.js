@@ -9,9 +9,10 @@ async function putItemToDB(putparams) {
     return new Promise(function(resolve, reject) {
         ddb.putItem(putparams, function(err, data) {
             if (err) {
-                console.log(err)
+                console.log("puterror!!!"+err)
                 resolve(false);
             } else {
+                console.log(data)
                 resolve(true);
             }
         })
@@ -21,12 +22,31 @@ async function putItemToDB(putparams) {
 async function updateItemDb(params) {
     return new Promise(function(resolve, reject) {
         dynamo.update(params, function(err, data) {
-            if (err) console.log(err);
-            else console.log(data);
+            if (err) resolve(false);
+            else resolve(true);
         });
     });
 }
 
+async function updateSkillsDb(skill, email) {
+    return new Promise(function(resolve, reject) {
+
+        const skillsParams = {
+            TableName: "skills",
+            Key: {
+                "skill": skill
+            },
+            UpdateExpression: "add tutors :t",
+            ExpressionAttributeValues: {
+                ":t":dynamo.createSet([email])
+            },
+            ReturnValues: "UPDATED_NEW"
+        };
+        updateItemDb(skillsParams);
+
+
+    });
+}
 exports.handler = async (event, context) => {
     //console.log('Received event:', JSON.stringify(event, null, 2));
 
@@ -46,7 +66,7 @@ exports.handler = async (event, context) => {
             if (body.register == true) {
                 console.log("yes register");
                 var userType = body.userType;
-                console.log(userType)
+                //console.log(userType)
                 var itemsStudent = {
                     'id': {
                         S: String(body.email)
@@ -103,7 +123,7 @@ exports.handler = async (event, context) => {
                     TableName: 'student-details',
                     Item: itemsStudent
                 };
-                console.log(paramsStudent)
+                // console.log(paramsStudent)
                 var paramsTutor = {
                     TableName: 'tutor-details',
                     Item: itemsTutor
@@ -137,7 +157,35 @@ exports.handler = async (event, context) => {
                     },
                     ReturnValues: "UPDATED_NEW"
                 };
-                await updateItemDb(paramsTutor);
+                if(await updateItemDb(paramsTutor)) {
+                    console.log("updated!");
+                
+               // await updateSkillsDb(body.skills,body.email);
+
+                var skillset = body.skills.split(',');
+                for (let i = 0; i < skillset.length; i++) {
+                    var putparams = {
+                        TableName: 'skills',
+                        Item: {
+                            'skill': {
+                                S: skillset[i]
+                            },
+                            'tutors': {
+                                SS: [ body.email]
+                            }
+
+                        },
+                        ConditionExpression: "attribute_not_exists(skill)", //condition to add new item to DynamoDB only when its not existing
+                    };
+                    console.log("put" + putparams);
+                    let exists = await putItemToDB(putparams);
+                    if (!exists) {
+                        console.log("exists");
+                        await updateSkillsDb(skillset[i], body.email)
+                    }
+                
+}}
+
             } else {
                 const paramsStudent = {
                     TableName: "student-details",
