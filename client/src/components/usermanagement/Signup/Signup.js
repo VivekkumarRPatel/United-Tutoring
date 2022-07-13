@@ -120,14 +120,14 @@ const Signup = () => {
            * https://getbootstrap.com/docs/4.6/components/forms/#server-side
            *
            */
-          <div class="signup-container">
+          <div className="signup-container">
             <h3>Sign Up</h3>
             <Form>
-              <div class="form-group ">
+              <div className="form-group ">
                 <label>First Name</label>
                 <input
                   type="text"
-                  class="form-control"
+                  className="form-control"
                   placeholder="Enter First Name"
                   name="firstname"
                   onChange={handleChange}
@@ -135,14 +135,14 @@ const Signup = () => {
                   value={values.firstname}
                 />
                 {errors.firstname && touched.firstname ? (
-                  <small class="error">{errors.firstname}</small>
+                  <small className="error">{errors.firstname}</small>
                 ) : null}
               </div>
-              <div class="form-group ">
+              <div className="form-group ">
                 <label>Last Name</label>
                 <input
                   type="text"
-                  class="form-control"
+                  className="form-control"
                   placeholder="Enter Last Name"
                   name="lastname"
                   onChange={handleChange}
@@ -150,14 +150,14 @@ const Signup = () => {
                   value={values.lastname}
                 />
                 {errors.lastname && touched.lastname ? (
-                  <small class="error">{errors.lastname}</small>
+                  <small className="error">{errors.lastname}</small>
                 ) : null}
               </div>
-              <div class="form-group ">
+              <div className="form-group ">
                 <label for="exampleInputEmail1">Email address</label>
                 <input
                   type="email"
-                  class="form-control"
+                  className="form-control"
                   name="email"
                   placeholder="Enter email address"
                   onChange={handleChange}
@@ -165,14 +165,14 @@ const Signup = () => {
                   value={values.email}
                 />
                 {errors.email && touched.email ? (
-                  <small class="error">{errors.email}</small>
+                  <small className="error">{errors.email}</small>
                 ) : null}
               </div>
-              <div class="form-group ">
+              <div className="form-group ">
                 <label>Mobile No</label>
                 <input
                   type="text"
-                  class="form-control"
+                  className="form-control"
                   placeholder="Enter Mobile No"
                   name="mobileno"
                   onChange={handleChange}
@@ -180,14 +180,14 @@ const Signup = () => {
                   value={values.mobileno}
                 />
                 {errors.mobileno && touched.mobileno ? (
-                  <small class="error">{errors.mobileno}</small>
+                  <small className="error">{errors.mobileno}</small>
                 ) : null}
               </div>
-              <div class="form-group">
+              <div className="form-group">
                 <label for="exampleInputPassword1">Password</label>
                 <input
                   type="password"
-                  class="form-control"
+                  className="form-control"
                   placeholder="Password"
                   name="password"
                   onChange={handleChange}
@@ -195,25 +195,25 @@ const Signup = () => {
                   value={values.password}
                 />
                 {errors.password && touched.password ? (
-                  <small class="error">{errors.password}</small>
+                  <small className="error">{errors.password}</small>
                 ) : null}
               </div>
-              <small class="form-text text-muted">
+              <small className="form-text text-muted">
                 Register as a tutor or student or both.
               </small>
-              <div class="form-group form-check form-check-inline">
+              <div className="form-group form-check form-check-inline">
                 {/* <input
-                  class="form-check-input"
+                  className="form-check-input"
                   type="checkbox"
                   value="tutor"
                   name="checked"
                 /> */}
                 <Field type="checkbox" name="usertype" value="tutor" />
-                <label class="form-check-label ml-1" for="inlineCheckbox1">
+                <label className="form-check-label ml-1" for="inlineCheckbox1">
                   Tutor
                 </label>
                 {/* <input
-                  class="form-check-input ml-2"
+                  className="form-check-input ml-2"
                   type="checkbox"
                   value="student"
                   name="checked"
@@ -222,20 +222,20 @@ const Signup = () => {
                   type="checkbox"
                   name="usertype"
                   value="student"
-                  class="ml-2"
+                  className="ml-2"
                 />
-                <label class="form-check-label ml-1" for="inlineCheckbox1">
+                <label className="form-check-label ml-1" for="inlineCheckbox1">
                   Student
                 </label>
               </div>
               {errors.usertype && touched.usertype ? (
-                <small class="error">{errors.usertype}</small>
+                <small className="error">{errors.usertype}</small>
               ) : null}
 
               <center>
                 <button
                   type="submit"
-                  class="btn btn-primary"
+                  className="btn btn-primary"
                   disabled={!(dirty && isValid)}
                 >
                   Submit

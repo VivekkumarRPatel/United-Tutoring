@@ -1,167 +1,243 @@
-import "./Tutor.css";
-import { Formik, Form, Field } from "formik";
-import * as Yup from "yup";
+import "./tutor.css";
+import 'antd/dist/antd.min.css'
 
+import * as Yup from "yup";
+import moment from 'moment'
+import React from "react";
+import axios from "axios";
+
+
+import { Formik, Form, Field } from "formik";
+import { TimePicker,DatePicker, Space } from 'antd';
+import { Typography, Button } from 'antd';
+import { useNavigate } from "react-router-dom";
+
+import { SAVE_AVAILABILITY } from '../../apis/Availability';
+
+const { Title } = Typography;
 
 const Tutor=()=>{
+  const requestData =  {id:'',date:'',startTime:'',endTime:''}
 
-const saveProfileDetails=()=>{
+  const [requestError,setRequestError] = React.useState(false);
+  const [submitProcess,setSubmitProcess] = React.useState(false);
 
-}
+  const navigate = useNavigate();
 
+  const onChangeDate = (date, dateString) => {
+    requestData.date = dateString;
+  };
 
+  const onChangeTime = (time, timeString) => {
+    requestData.startTime = timeString[0]
+    requestData.endTime = timeString[1]
+  };
+
+  const onSubmitHandle = () => {
+    requestData.id = localStorage.getItem('username');
+    if(requestData.date && requestData.id && requestData.startTime && requestData.endTime){
+
+      var data = JSON.stringify(requestData);
+      
+      var config = {
+        method: 'post',
+        url: SAVE_AVAILABILITY,
+        headers: { 
+          'Content-Type': 'application/json'
+        },
+        data : data
+      };
+      
+
+      axios(config)
+        .then(function (response) {
+          console.log(JSON.stringify(response.data));
+          navigate('availability')
+        })
+        .catch(function (error) {
+          console.log(error);
+        }).finally(function () {
+          setSubmitProcess(false);
+        })
+
+      setSubmitProcess(true)
+      setRequestError(false)
+    }else{
+      setRequestError(true)
+    }
+  }
 
     return (
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validator}
-          onSubmit={saveProfileDetails}
-        >
-          {(formik) => {
-            const {
-              values,
-              errors,
-              touched,
-              isValid,
-              dirty,
-              handleChange,
-              handleSubmit,
-              handleBlur,
-            } = formik;
+        // <Formik
+        //   initialValues={initialValues}
+        //   validationSchema={validator}
+        //   onSubmit={saveProfileDetails}
+        // >
+        //   {(formik) => {
+        //     const {
+        //       values,
+        //       errors,
+        //       touched,
+        //       isValid,
+        //       dirty,
+        //       handleChange,
+        //       handleSubmit,
+        //       handleBlur,
+        //     } = formik;
     
-            return (
-              /**
-               * This code is refered from
-               * https://getbootstrap.com/docs/4.1/components/forms/
-               * https://getbootstrap.com/docs/4.6/components/forms/#server-side
-               *
-               */
-              <div class="signup-container">
-                <h3>Sign Up</h3>
-                <Form>
-                  <div class="form-group ">
-                    <label>First Name</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      placeholder="Enter First Name"
-                      name="firstname"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.firstname}
-                    />
-                    {errors.firstname && touched.firstname ? (
-                      <small class="error">{errors.firstname}</small>
-                    ) : null}
-                  </div>
-                  <div class="form-group ">
-                    <label>Last Name</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      placeholder="Enter Last Name"
-                      name="lastname"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.lastname}
-                    />
-                    {errors.lastname && touched.lastname ? (
-                      <small class="error">{errors.lastname}</small>
-                    ) : null}
-                  </div>
-                  <div class="form-group ">
-                    <label for="exampleInputEmail1">Email address</label>
-                    <input
-                      type="email"
-                      class="form-control"
-                      name="email"
-                      placeholder="Enter email address"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.email}
-                    />
-                    {errors.email && touched.email ? (
-                      <small class="error">{errors.email}</small>
-                    ) : null}
-                  </div>
-                  <div class="form-group ">
-                    <label>Mobile No</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      placeholder="Enter Mobile No"
-                      name="mobileno"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.mobileno}
-                    />
-                    {errors.mobileno && touched.mobileno ? (
-                      <small class="error">{errors.mobileno}</small>
-                    ) : null}
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Password</label>
-                    <input
-                      type="password"
-                      class="form-control"
-                      placeholder="Password"
-                      name="password"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.password}
-                    />
-                    {errors.password && touched.password ? (
-                      <small class="error">{errors.password}</small>
-                    ) : null}
-                  </div>
-                  <small class="form-text text-muted">
-                    Register as a tutor or student or both.
-                  </small>
-                  <div class="form-group form-check form-check-inline">
-                    {/* <input
-                      class="form-check-input"
-                      type="checkbox"
-                      value="tutor"
-                      name="checked"
-                    /> */}
-                    <Field type="checkbox" name="usertype" value="tutor" />
-                    <label class="form-check-label ml-1" for="inlineCheckbox1">
-                      Tutor
-                    </label>
-                    {/* <input
-                      class="form-check-input ml-2"
-                      type="checkbox"
-                      value="student"
-                      name="checked"
-                    /> */}
-                    <Field
-                      type="checkbox"
-                      name="usertype"
-                      value="student"
-                      class="ml-2"
-                    />
-                    <label class="form-check-label ml-1" for="inlineCheckbox1">
-                      Student
-                    </label>
-                  </div>
-                  {errors.usertype && touched.usertype ? (
-                    <small class="error">{errors.usertype}</small>
-                  ) : null}
+        //     return (
+        //       /**
+        //        * This code is refered from
+        //        * https://getbootstrap.com/docs/4.1/components/forms/
+        //        * https://getbootstrap.com/docs/4.6/components/forms/#server-side
+        //        *
+        //        */
+        //       <div class="signup-container">
+        //         <h3>Sign Up</h3>
+        //         <Form>
+        //           <div class="form-group ">
+        //             <label>First Name</label>
+        //             <input
+        //               type="text"
+        //               class="form-control"
+        //               placeholder="Enter First Name"
+        //               name="firstname"
+        //               onChange={handleChange}
+        //               onBlur={handleBlur}
+        //               value={values.firstname}
+        //             />
+        //             {errors.firstname && touched.firstname ? (
+        //               <small class="error">{errors.firstname}</small>
+        //             ) : null}
+        //           </div>
+        //           <div class="form-group ">
+        //             <label>Last Name</label>
+        //             <input
+        //               type="text"
+        //               class="form-control"
+        //               placeholder="Enter Last Name"
+        //               name="lastname"
+        //               onChange={handleChange}
+        //               onBlur={handleBlur}
+        //               value={values.lastname}
+        //             />
+        //             {errors.lastname && touched.lastname ? (
+        //               <small class="error">{errors.lastname}</small>
+        //             ) : null}
+        //           </div>
+        //           <div class="form-group ">
+        //             <label for="exampleInputEmail1">Email address</label>
+        //             <input
+        //               type="email"
+        //               class="form-control"
+        //               name="email"
+        //               placeholder="Enter email address"
+        //               onChange={handleChange}
+        //               onBlur={handleBlur}
+        //               value={values.email}
+        //             />
+        //             {errors.email && touched.email ? (
+        //               <small class="error">{errors.email}</small>
+        //             ) : null}
+        //           </div>
+        //           <div class="form-group ">
+        //             <label>Mobile No</label>
+        //             <input
+        //               type="text"
+        //               class="form-control"
+        //               placeholder="Enter Mobile No"
+        //               name="mobileno"
+        //               onChange={handleChange}
+        //               onBlur={handleBlur}
+        //               value={values.mobileno}
+        //             />
+        //             {errors.mobileno && touched.mobileno ? (
+        //               <small class="error">{errors.mobileno}</small>
+        //             ) : null}
+        //           </div>
+        //           <div class="form-group">
+        //             <label for="exampleInputPassword1">Password</label>
+        //             <input
+        //               type="password"
+        //               class="form-control"
+        //               placeholder="Password"
+        //               name="password"
+        //               onChange={handleChange}
+        //               onBlur={handleBlur}
+        //               value={values.password}
+        //             />
+        //             {errors.password && touched.password ? (
+        //               <small class="error">{errors.password}</small>
+        //             ) : null}
+        //           </div>
+        //           <small class="form-text text-muted">
+        //             Register as a tutor or student or both.
+        //           </small>
+        //           <div class="form-group form-check form-check-inline">
+        //             {/* <input
+        //               class="form-check-input"
+        //               type="checkbox"
+        //               value="tutor"
+        //               name="checked"
+        //             /> */}
+        //             <Field type="checkbox" name="usertype" value="tutor" />
+        //             <label class="form-check-label ml-1" for="inlineCheckbox1">
+        //               Tutor
+        //             </label>
+        //             {/* <input
+        //               class="form-check-input ml-2"
+        //               type="checkbox"
+        //               value="student"
+        //               name="checked"
+        //             /> */}
+        //             <Field
+        //               type="checkbox"
+        //               name="usertype"
+        //               value="student"
+        //               class="ml-2"
+        //             />
+        //             <label class="form-check-label ml-1" for="inlineCheckbox1">
+        //               Student
+        //             </label>
+        //           </div>
+        //           {errors.usertype && touched.usertype ? (
+        //             <small class="error">{errors.usertype}</small>
+        //           ) : null}
     
-                  <center>
-                    <button
-                      type="submit"
-                      class="btn btn-primary"
-                      disabled={!(dirty && isValid)}
-                    >
-                      Submit
-                    </button>
-                  </center>
-                </Form>
-              </div>
-            );
-          }}
-        </Formik>
+        //           <center>
+        //             <button
+        //               type="submit"
+        //               class="btn btn-primary"
+        //               disabled={!(dirty && isValid)}
+        //             >
+        //               Submit
+        //             </button>
+        //           </center>
+        //         </Form>
+        //       </div>
+        //     );
+        //   }}
+        // </Formik>
+
+
+      <>
+        <section style={{ textAlign: 'center' }}>
+          <Title level={2}>Enter your availability</Title>
+          <section>
+            <Space direction="vertical" size={12}>
+              <DatePicker disabledDate={(current) => {
+                return moment().add(-1, 'days') >= current ||
+                  moment().add(1, 'month') <= current;
+              }} format={'DD-MM-YYYY'} onChange={onChangeDate} />
+            </Space>
+            <TimePicker.RangePicker format={'HH:mm'} onChange={onChangeTime} />
+          </section>
+          <section style={{ marginTop: '2.5%' }}>
+            <Button type='primary' onClick={onSubmitHandle} loading={submitProcess}> Submit </Button>
+            <Button style={{marginLeft:'2.5%'}} type='primary' onClick={()=>navigate('availability')}> See All Availabilities </Button>
+          </section>
+        </section>
+      </>
       );
     
 }

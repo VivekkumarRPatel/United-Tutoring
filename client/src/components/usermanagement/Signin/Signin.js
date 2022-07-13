@@ -101,14 +101,14 @@ const Signin = () => {
            * https://getbootstrap.com/docs/4.6/components/forms/#server-side
            *
            */
-          <div class="signup-container">
+          <div className="signup-container">
             <h3>Sign In</h3>
             <Form>
-              <div class="form-group ">
+              <div className="form-group ">
                 <label for="exampleInputEmail1">Email address</label>
                 <input
                   type="email"
-                  class="form-control"
+                  className="form-control"
                   name="email"
                   placeholder="Enter email address"
                   onChange={handleChange}
@@ -116,15 +116,15 @@ const Signin = () => {
                   value={values.email}
                 />
                 {errors.email && touched.email ? (
-                  <small class="error">{errors.email}</small>
+                  <small className="error">{errors.email}</small>
                 ) : null}
               </div>
 
-              <div class="form-group">
+              <div className="form-group">
                 <label for="exampleInputPassword1">Password</label>
                 <input
                   type="password"
-                  class="form-control"
+                  className="form-control"
                   placeholder="Password"
                   name="password"
                   onChange={handleChange}
@@ -132,18 +132,18 @@ const Signin = () => {
                   value={values.password}
                 />
                 {errors.password && touched.password ? (
-                  <small class="error">{errors.password}</small>
+                  <small className="error">{errors.password}</small>
                 ) : null}
               </div>
               
-              <small class="form-text text-muted">
+              <small className="form-text text-muted">
               <a href="/forgetpassword">  Forget password.</a>
               </small>
               
               <center>
                 <button
                   type="submit"
-                  class="btn btn-primary"
+                  className="btn btn-primary"
                   disabled={!(dirty && isValid)}
                 >
                   Submit

@@ -17,6 +17,7 @@ import Student from './components/Student/Student';
 import Forgetpassword from './components/usermanagement/Forgetpassword/Forgetpassword';
 import Resetpassword from './components/usermanagement/Resetpassword/Resetpassword';
 import Profile from './components/Profile/Profile';
+import Availability from './components/Tutor/Availability'
 
 function App() {
   return (
@@ -32,7 +33,7 @@ function App() {
               <Route path="/tutor" element={<Tutor />}></Route>
               <Route path="/student" element={<Student />}></Route>
               <Route path="/profile" element={<Profile />}></Route>
-
+              <Route path="tutor/availability" element={<Availability />} />
             </Route>
           </Routes>
 
