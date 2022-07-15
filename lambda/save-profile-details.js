@@ -20,6 +20,7 @@ async function putItemToDB(putparams) {
 }
 
 async function updateItemDb(params) {
+    console.log("inside updateItemDb"+params);
     return new Promise(function(resolve, reject) {
         dynamo.update(params, function(err, data) {
             if (err) resolve(false);
@@ -30,7 +31,7 @@ async function updateItemDb(params) {
 
 async function updateSkillsDb(skill, email) {
     return new Promise(function(resolve, reject) {
-
+console.log("inside updateSkillsDb"+skill);
         const skillsParams = {
             TableName: "skills",
             Key: {
@@ -42,7 +43,7 @@ async function updateSkillsDb(skill, email) {
             },
             ReturnValues: "UPDATED_NEW"
         };
-        updateItemDb(skillsParams);
+         resolve(updateItemDb(skillsParams));
 
 
     });
@@ -157,34 +158,7 @@ exports.handler = async (event, context) => {
                     },
                     ReturnValues: "UPDATED_NEW"
                 };
-                if(await updateItemDb(paramsTutor)) {
-                    console.log("updated!");
-                
-               // await updateSkillsDb(body.skills,body.email);
-
-                var skillset = body.skills.split(',');
-                for (let i = 0; i < skillset.length; i++) {
-                    var putparams = {
-                        TableName: 'skills',
-                        Item: {
-                            'skill': {
-                                S: skillset[i]
-                            },
-                            'tutors': {
-                                SS: [ body.email]
-                            }
-
-                        },
-                        ConditionExpression: "attribute_not_exists(skill)", //condition to add new item to DynamoDB only when its not existing
-                    };
-                    console.log("put" + putparams);
-                    let exists = await putItemToDB(putparams);
-                    if (!exists) {
-                        console.log("exists");
-                        await updateSkillsDb(skillset[i], body.email)
-                    }
-                
-}}
+                await updateItemDb(paramsTutor);
 
             } else {
                 const paramsStudent = {
