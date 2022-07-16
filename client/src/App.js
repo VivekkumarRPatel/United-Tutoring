@@ -32,7 +32,6 @@ function App() {
               <Route path="/tutor" element={<Tutor />}></Route>
               <Route path="/student" element={<Student />}></Route>
               <Route path="/profile" element={<Profile />}></Route>
-
             </Route>
           </Routes>
 

@@ -225,6 +225,7 @@ const StudentForm = ({ values,
     </div>
   );
 }
+
 const GeneralForm = ({ values,
   errors,
   touched,
@@ -319,7 +320,7 @@ const GeneralForm = ({ values,
             className="rounded-circle img-fluid image-size"
           />
         </div>
-        <div class="form-group ">
+        <div class="form-group">
           <label>Profile pic</label>
           <input
             type="file"

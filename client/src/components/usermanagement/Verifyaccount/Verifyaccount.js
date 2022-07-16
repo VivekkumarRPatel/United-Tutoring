@@ -11,6 +11,27 @@ import {
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
+import AWS from 'aws-sdk';
+//import * as AWS from "@aws-sdk/client-sns";
+
+// const SESConfig = {
+//     apiVersion: "2010-12-01",
+//     accessKeyId: "AKIA4RE7FY6PYYZZQ6VQ",
+//     accessSecretKey:"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",
+//     region: "us-east-1"
+// }
+
+// AWS.config.update(SESConfig);
+
+
+const SESConfig = {
+    apiVersion: "2010-12-01",
+    accessKeyId: "AKIA4RE7FY6PYYZZQ6VQ",
+    accessSecretKey: "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",
+    
+}
+
+const snsClient = new AWS.SNS({region: "us-east-1"});
 
 const Verifyaccount = () => {
 
@@ -43,6 +64,42 @@ const Verifyaccount = () => {
             function (err, result) {
                 if (result == "SUCCESS") {
 
+                    var params1 = {
+                        Protocol: 'email', /* required */
+                        TopicArn: 'arn:aws:sns:us-east-1:861474768799:sendemail', /* required */
+                        // Attributes: {
+                        //   '<attributeName>': 'STRING_VALUE',
+                        //   /* '<attributeName>': ... */
+                        // },
+                        Endpoint: attributeValues.email,
+                        ReturnSubscriptionArn: true
+                    };
+
+                    var response1 = snsClient.subscribe(params1, function (err, data) {
+                        if (err) {
+                            console.log("Inside subscribe  if");
+                            console.log(err, err.stack); }// an error occurred
+                        else { 
+                            console.log("Inside subscribe  else");
+                            console.log(data); }           // successful response
+                    });
+
+                    var emailIds = [attributeValues.email];
+
+                    var params2 = {
+                        AttributeName: 'FilterPolicy', /* required */
+                        SubscriptionArn: response1.SubscriptionArn, /* required */
+                        AttributeValue: JSON.stringify({ "email": emailIds })
+                    };
+                    snsClient.setSubscriptionAttributes(params2, function (err, data) {
+                        if (err) { 
+                            console.log("Inside setSubscriptionAttributes if");
+                            console.log(err, err.stack); } // an error occurred
+                        else { 
+                            console.log("Inside setSubscriptionAttributes else");
+                            console.log(data); }           // successful response
+                    });
+
                     const successMessage = result.message;
                     localStorage.removeItem('username');
                     toast.success(
@@ -60,7 +117,7 @@ const Verifyaccount = () => {
     }
 
 
-    function resendCode (e){
+    function resendCode(e) {
         e.preventDefault();
         console.log("inside resend code");
         const userPool = new CognitoUserPool(pooldetails);
