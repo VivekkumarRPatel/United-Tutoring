@@ -41,6 +41,7 @@ const Signin = () => {
       onSuccess: function (result) {
         //get user type
         var userType = result.idToken.payload["custom:user_type"];
+        localStorage.setItem('userType',userType);
         if(userType.indexOf(',')!=-1){
           localStorage.setItem('tutor', "tutor");
           localStorage.setItem('student', "student");
@@ -52,9 +53,6 @@ const Signin = () => {
             localStorage.setItem('student', "student");
           }
         }
-
-
-
         var email = result.idToken.payload.email;
         console.log("value of the token is" + result.getIdToken().getJwtToken());
         localStorage.setItem('token', result.getIdToken().getJwtToken());

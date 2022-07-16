@@ -11,7 +11,7 @@ import pooldetails from "../pooldata.json";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-
+import axios from 'axios'
 
 const Signup = () => {
   //Initialize instance with AWS cognito user pool data
@@ -64,7 +64,24 @@ const Signup = () => {
           toast.error(err.message);
         }
         else{
-
+        const api = 'https://mpq8jj58al.execute-api.us-east-1.amazonaws.com/dev/save-user-details';
+        const data = {
+          "register" : true,
+          "userType" : attributeValues.usertype.toString(),
+          "email" :  attributeValues.email,
+          "firstName" : attributeValues.firstname,
+          "lastName" : attributeValues.lastname,
+          "mobileNo" : attributeValues.mobileno
+        };
+        axios
+          .post(api, data)
+          .then((response) => {
+            console.log("res:"+response);
+            
+          })
+          .catch((error) => {
+            console.log(error);
+          });
           const userDetails=result.user;
           localStorage.setItem('username', userDetails.username);
 
