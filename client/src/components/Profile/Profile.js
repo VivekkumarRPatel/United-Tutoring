@@ -48,7 +48,7 @@ const TutorForm = ({ values,
     <div>
       <h5>Tutor Details</h5>
       <Form>
-        <div class="form-group ">
+        <div className="form-group ">
           <label>Skills</label>
           {/* <Field
         className="custom-select"
@@ -65,11 +65,11 @@ const TutorForm = ({ values,
             name="skills"
           />
         </div>
-        <div class="form-group ">
+        <div className="form-group ">
           <label>Filed experience</label>
           <input
             type="number"
-            class="form-control"
+            className="form-control"
             placeholder="Enter years of experience"
             name="fieldExperience"
             onBlur={handleBlur}
@@ -77,14 +77,14 @@ const TutorForm = ({ values,
             value={values.fieldExperience}
           />
           {errors.fieldExperience && touched.fieldExperience ? (
-            <small class="error">{errors.fieldExperience}</small>
+            <small className="error">{errors.fieldExperience}</small>
           ) : null}
         </div>
-        <div class="form-group ">
+        <div className="form-group ">
           <label>Experience Description</label>
           <input
             type="text"
-            class="form-control"
+            className="form-control"
             placeholder="Enter Description"
             name="desc"
             onBlur={handleBlur}
@@ -92,13 +92,13 @@ const TutorForm = ({ values,
             value={values.desc}
           />
           {errors.desc && touched.desc ? (
-            <small class="error">{errors.desc}</small>
+            <small className="error">{errors.desc}</small>
           ) : null}
         </div>
         <center>
           <button
             type="submit"
-            class="btn btn-primary"
+            className="btn btn-primary"
             disabled={!(dirty && isValid)}
             onSubmit={handleSubmit}
           >
@@ -137,7 +137,7 @@ const StudentForm = ({ values,
     <div>
       <h5>Student Details</h5>
       <Form>
-        <div class="form-group ">
+        <div className="form-group ">
           <label>Courses</label>
           <CreatableSelect
             isMulti
@@ -147,11 +147,11 @@ const StudentForm = ({ values,
             name="courses"
           />
         </div>
-        <div class="form-group ">
+        <div className="form-group ">
           <label>University</label>
           <input
             type="text"
-            class="form-control"
+            className="form-control"
             placeholder="Enter University"
             name="university"
             onChange={handleChange}
@@ -159,14 +159,14 @@ const StudentForm = ({ values,
             value={values.university}
           />
           {errors.university && touched.university ? (
-            <small class="error">{errors.university}</small>
+            <small className="error">{errors.university}</small>
           ) : null}
         </div>
-        <div class="form-group ">
+        <div className="form-group ">
           <label>Program</label>
           <input
             type="text"
-            class="form-control"
+            className="form-control"
             placeholder="Enter Program"
             name="program"
             onChange={handleChange}
@@ -174,15 +174,15 @@ const StudentForm = ({ values,
             value={values.program}
           />
           {errors.program && touched.program ? (
-            <small class="error">{errors.program}</small>
+            <small className="error">{errors.program}</small>
           ) : null}
         </div>
 
-        <div class="form-group ">
+        <div className="form-group ">
           <label>Start Year</label>
           <input
             type="number"
-            class="form-control"
+            className="form-control"
             placeholder="Enter Start Year"
             name="startYear"
             onChange={handleChange}
@@ -190,14 +190,14 @@ const StudentForm = ({ values,
             value={values.startYear}
           />
           {errors.startYear && touched.startYear ? (
-            <small class="error">{errors.startYear}</small>
+            <small className="error">{errors.startYear}</small>
           ) : null}
         </div>
-        <div class="form-group ">
+        <div className="form-group ">
           <label>End Year</label>
           <input
             type="number"
-            class="form-control"
+            className="form-control"
             placeholder="Enter End Year"
             name="endYear"
             onChange={handleChange}
@@ -205,14 +205,14 @@ const StudentForm = ({ values,
             value={values.endYear}
           />
           {errors.endYear && touched.endYear ? (
-            <small class="error">{errors.endYear}</small>
+            <small className="error">{errors.endYear}</small>
           ) : null}
         </div>
 
         <center>
           <button
             type="submit"
-            class="btn btn-primary"
+            className="btn btn-primary"
             disabled={!(dirty && isValid)}
             onSubmit={handleSubmit}
           >
@@ -253,11 +253,11 @@ const GeneralForm = ({ values,
     <div>
       <h5>General Details</h5>
       <Form>
-        <div class="form-group ">
+        <div className="form-group ">
           <label>Firstname</label>
           <input
             type="text"
-            class="form-control"
+            className="form-control"
             placeholder="Enter First Name"
             name="firstName"
             onChange={handleChange}
@@ -265,14 +265,14 @@ const GeneralForm = ({ values,
             value={values.firstName}
           />
           {errors.firstName && touched.firstName ? (
-            <small class="error">{errors.firstName}</small>
+            <small className="error">{errors.firstName}</small>
           ) : null}
         </div>
-        <div class="form-group ">
+        <div className="form-group ">
           <label>Lastname</label>
           <input
             type="text"
-            class="form-control"
+            className="form-control"
             placeholder="Enter Last Name"
             name="lastName"
             onChange={handleChange}
@@ -280,14 +280,14 @@ const GeneralForm = ({ values,
             value={values.lastName}
           />
           {errors.lastName && touched.lastName ? (
-            <small class="error">{errors.lastName}</small>
+            <small className="error">{errors.lastName}</small>
           ) : null}
         </div>
-        <div class="form-group ">
+        <div className="form-group ">
           <label>Email</label>
           <input
             type="text"
-            class="form-control"
+            className="form-control"
             placeholder="Enter email"
             name="email"
             onChange={handleChange}
@@ -295,14 +295,14 @@ const GeneralForm = ({ values,
             value={values.email}
           />
           {errors.email && touched.email ? (
-            <small class="error">{errors.email}</small>
+            <small className="error">{errors.email}</small>
           ) : null}
         </div>
-        <div class="form-group ">
+        <div className="form-group ">
           <label>Mobile No</label>
           <input
             type="text"
-            class="form-control"
+            className="form-control"
             placeholder="Enter Mobile No"
             name="mobileNo"
             onChange={handleChange}
@@ -310,21 +310,21 @@ const GeneralForm = ({ values,
             value={values.mobileNo}
           />
           {errors.mobileNo && touched.mobileNo ? (
-            <small class="error">{errors.mobileNo}</small>
+            <small className="error">{errors.mobileNo}</small>
           ) : null}
         </div>
-        <div class="form-group">
+        <div className="form-group">
           <img
             src={profilePic}
             alt="profile pic"
             className="rounded-circle img-fluid image-size"
           />
         </div>
-        <div class="form-group">
+        <div className="form-group ">
           <label>Profile pic</label>
           <input
             type="file"
-            class="form-control"
+            className="form-control"
             placeholder="Upload profile picture"
             name="file"
             onChange={(event) => { fileUpload(event.currentTarget.files[0]) }}
@@ -333,7 +333,7 @@ const GeneralForm = ({ values,
         <center>
           <button
             type="submit"
-            class="btn btn-primary"
+            className="btn btn-primary"
             disabled={!(dirty && isValid)}
             onSubmit={handleSubmit}
           >
@@ -491,7 +491,7 @@ const Profile = () => {
   }
 
   return (
-    <div class="signup-container">
+    <div className="signup-container">
       <Formik
         initialValues={generalValues}
         validationSchema={generalValidator}

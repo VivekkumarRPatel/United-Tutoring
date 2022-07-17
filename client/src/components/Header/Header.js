@@ -4,11 +4,12 @@ import {
   CognitoUser,
   AmazonCognitoIdentity
 } from "amazon-cognito-identity-js";
+import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-
+import { Button, Dropdown, Menu, Space } from "antd";
 const Header = () => {
   const api = 'https://b30b41k856.execute-api.us-east-1.amazonaws.com/dev/get-profile-img?id='+localStorage.getItem('username');
   axios
@@ -24,7 +25,7 @@ const Header = () => {
     
   })
   .catch((error) => {
-    console.log(error);
+    console.error(error);
   });
   const navigate = useNavigate();
 
@@ -54,6 +55,24 @@ const Header = () => {
     navigate("/signin");
   }
 
+  const menu = () => {
+    return (
+      <Menu
+      items={[
+        {
+          label: 'Availability',
+          key: '1',
+          onClick: () => { navigate('/tutor')}
+        },
+        {
+          label: 'Booking details',
+          key: '2',
+          onClick: () => { navigate('/tutor/bookings')}
+        },
+      ]}
+    />
+    )
+  }
 
 
   return (
@@ -61,9 +80,9 @@ const Header = () => {
      * This code is refered from
      * https://getbootstrap.com/docs/4.0/getting-started/introduction/
      */
-    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+    <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top">
       <button
-        class="navbar-toggler"
+        className="navbar-toggler"
         type="button"
         data-toggle="collapse"
         data-target="#headermenu"
@@ -71,28 +90,28 @@ const Header = () => {
         aria-expanded="false"
         aria-label="Toggle navigation"
       >
-        <span class="navbar-toggler-icon"></span>
+        <span className="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="headermenu">
-        {console.log(localStorage.getItem('token'))}
-        {localStorage.getItem('token') == null ? <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="/signup">
+      <div className="collapse navbar-collapse" id="headermenu">
+        {/* {console.log(localStorage.getItem('token'))} */}
+        {localStorage.getItem('token') == null ? <ul className="navbar-nav">
+          <li className="nav-item">
+            <a className="nav-link" href="/signup">
               Signup
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/signin">
+          <li className="nav-item">
+            <a className="nav-link" href="/signin">
               Login
             </a>
           </li>
         </ul> : null}
 
 
-        {localStorage.getItem('token') !== null ? <ul class="navbar-nav">
-          <li class="nav-item dropdown">
+        {localStorage.getItem('token') !== null ? <ul className="navbar-nav">
+          <li className="nav-item dropdown">
             <a
-              class="nav-link"
+              className="nav-link"
               href="#"
               id="navbarDropdown"
               role="button"
@@ -113,13 +132,13 @@ const Header = () => {
               />
             </a>
             <div
-              class="dropdown-menu dropdown-menu-md-right"
+              className="dropdown-menu dropdown-menu-md-right"
               aria-labelledby="navbarDropdown"
             >
-              <a class="dropdown-item" href="/profile">
+              <a className="dropdown-item" href="/profile">
                 Profile
               </a>
-              <a onClick={signout} class="dropdown-item">
+              <a onClick={signout} className="dropdown-item">
                 Logout
               </a>
             </div>
@@ -127,17 +146,28 @@ const Header = () => {
         </ul>
           : null}
 
-        {localStorage.getItem('tutor') !== null ? <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="/tutor">
+        {/* {localStorage.getItem('tutor') !== null ? <ul className="navbar-nav">
+          <li className="nav-item">
+            <a className="nav-link" href="/tutor">
               Tutor
             </a>
           </li>
-        </ul> : null}
+        </ul> : null} */}
 
-        {localStorage.getItem('student') !== null ? <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="/student">
+        {localStorage.getItem('tutor') !== null
+          ?
+          <Dropdown overlay={menu}>
+            <Button>
+              <Space>
+                Tutor
+                <DownOutlined />
+              </Space>
+            </Button>
+          </Dropdown> : null}
+
+        {localStorage.getItem('student') !== null ? <ul className="navbar-nav">
+          <li className="nav-item">
+            <a className="nav-link" href="/student">
               Student
             </a>
           </li>

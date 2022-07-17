@@ -18,7 +18,6 @@ const UnAuthenticatedRoute = ({ restrictedToPublicOnly }) => {
 
             try {
                 loggedInUser = await userPool.getCurrentUser();
-                console.log("Inside UnAuthenticated route user data ->:" + loggedInUser);
 
                 if (loggedInUser) {
                     setValidUser(true);

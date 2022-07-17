@@ -72,14 +72,14 @@ const senEmail=(attrValues)=>{
                * https://getbootstrap.com/docs/4.6/components/forms/#server-side
                *
                */
-              <div class="signup-container">
+              <div className="signup-container">
                 <h3>Forget Password</h3>
                 <Form>
-                  <div class="form-group ">
+                  <div className="form-group ">
                     <label for="exampleInputEmail1">Email address</label>
                     <input
                       type="email"
-                      class="form-control"
+                      className="form-control"
                       name="email"
                       placeholder="Enter email address"
                       onChange={handleChange}
@@ -87,14 +87,14 @@ const senEmail=(attrValues)=>{
                       value={values.email}
                     />
                     {errors.email && touched.email ? (
-                      <small class="error">{errors.email}</small>
+                      <small className="error">{errors.email}</small>
                     ) : null}
                   </div>
                
                   <center>
                     <button
                       type="submit"
-                      class="btn btn-primary"
+                      className="btn btn-primary"
                       disabled={!(dirty && isValid)}
                     >
                       Submit

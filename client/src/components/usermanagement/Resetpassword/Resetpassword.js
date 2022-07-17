@@ -63,14 +63,14 @@ const Resetpassword = () => {
                      * https://getbootstrap.com/docs/4.6/components/forms/#server-side
                      *
                      */
-                    <div class="signup-container">
+                    <div className="signup-container">
                         <h3>Reset Password</h3>
                         <Form>
-                            <div class="form-group ">
+                            <div className="form-group ">
                                 <label >Verification Code</label>
                                 <input
                                     type="text"
-                                    class="form-control"
+                                    className="form-control"
                                     name="code"
                                     placeholder="Please enter verification code"
                                     onChange={handleChange}
@@ -78,14 +78,14 @@ const Resetpassword = () => {
                                     value={values.code}
                                 />
                                 {errors.code && touched.code ? (
-                                    <small class="error">{errors.code}</small>
+                                    <small className="error">{errors.code}</small>
                                 ) : null}
                             </div>
-                            <div class="form-group ">
+                            <div className="form-group ">
                                 <label for="exampleInputEmail1">Email address</label>
                                 <input
                                     type="email"
-                                    class="form-control"
+                                    className="form-control"
                                     name="email"
                                     placeholder="Enter email address"
                                     onChange={handleChange}
@@ -93,14 +93,14 @@ const Resetpassword = () => {
                                     value={values.email}
                                 />
                                 {errors.email && touched.email ? (
-                                    <small class="error">{errors.email}</small>
+                                    <small className="error">{errors.email}</small>
                                 ) : null}
                             </div>
-                            <div class="form-group ">
+                            <div className="form-group ">
                                 <label >Password</label>
                                 <input
                                     type="password"
-                                    class="form-control"
+                                    className="form-control"
                                     name="newpassword"
                                     placeholder="Please enter new password"
                                     onChange={handleChange}
@@ -108,14 +108,14 @@ const Resetpassword = () => {
                                     value={values.newpassword}
                                 />
                                 {errors.newpassword && touched.newpassword ? (
-                                    <small class="error">{errors.newpassword}</small>
+                                    <small className="error">{errors.newpassword}</small>
                                 ) : null}
                             </div>
 
                             <center>
                                 <button
                                     type="submit"
-                                    class="btn btn-primary"
+                                    className="btn btn-primary"
                                     disabled={!(dirty && isValid)}
                                 >
                                     Change Password
