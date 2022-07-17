@@ -1,4 +1,4 @@
-import "./tutor.css";
+import "./Tutor.css";
 import 'antd/dist/antd.min.css'
 
 import * as Yup from "yup";
