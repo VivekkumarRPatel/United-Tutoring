@@ -225,6 +225,7 @@ const StudentForm = ({ values,
     </div>
   );
 }
+
 const GeneralForm = ({ values,
   errors,
   touched,

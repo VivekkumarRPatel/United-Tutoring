@@ -88,11 +88,13 @@ const Signup = () => {
           toast.success(
             "User registered succesfully and account veification link send on the given email id.Please verify account before login"
           );
+
           navigate("/verifyaccount");
         }
       }
 
     );
+    
   };
 
   return (
