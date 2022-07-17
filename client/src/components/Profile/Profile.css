@@ -12,3 +12,8 @@
 .error{
     color:red;
 }
+
+.image-size{
+    width: 85px;
+    height: 85px;
+}
