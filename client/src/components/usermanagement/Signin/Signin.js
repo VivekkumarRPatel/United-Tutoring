@@ -15,12 +15,13 @@ import { useNavigate } from "react-router-dom";
 
 
 
-const Signin = () => {
+const Signin = ( props ) => {
   //   AWS.config.update({
   //     region: 'us-east-1'
   // });
   const navigate = useNavigate();
-
+  const Auth = props.Auth;
+  const setAuth = props.setAuth;
 
   const authenticateUser = (attributeValues) => {
 

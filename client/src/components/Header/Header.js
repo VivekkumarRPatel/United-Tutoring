@@ -4,10 +4,12 @@ import {
   CognitoUser,
   AmazonCognitoIdentity
 } from "amazon-cognito-identity-js";
+import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import { Button, Dropdown, Menu, Space } from "antd";
 const Header = () => {
   const api = 'https://b30b41k856.execute-api.us-east-1.amazonaws.com/dev/get-profile-img?id='+localStorage.getItem('username');
   axios
@@ -23,7 +25,7 @@ const Header = () => {
     
   })
   .catch((error) => {
-    console.log(error);
+    console.error(error);
   });
   const navigate = useNavigate();
 
@@ -53,6 +55,24 @@ const Header = () => {
     navigate("/signin");
   }
 
+  const menu = () => {
+    return (
+      <Menu
+      items={[
+        {
+          label: 'Availability',
+          key: '1',
+          onClick: () => { navigate('/tutor')}
+        },
+        {
+          label: 'Booking details',
+          key: '2',
+          onClick: () => { navigate('/tutor/bookings')}
+        },
+      ]}
+    />
+    )
+  }
 
 
   return (
@@ -126,13 +146,24 @@ const Header = () => {
         </ul>
           : null}
 
-        {localStorage.getItem('tutor') !== null ? <ul className="navbar-nav">
+        {/* {localStorage.getItem('tutor') !== null ? <ul className="navbar-nav">
           <li className="nav-item">
             <a className="nav-link" href="/tutor">
               Tutor
             </a>
           </li>
-        </ul> : null}
+        </ul> : null} */}
+
+        {localStorage.getItem('tutor') !== null
+          ?
+          <Dropdown overlay={menu}>
+            <Button>
+              <Space>
+                Tutor
+                <DownOutlined />
+              </Space>
+            </Button>
+          </Dropdown> : null}
 
         {localStorage.getItem('student') !== null ? <ul className="navbar-nav">
           <li className="nav-item">
