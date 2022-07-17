@@ -163,14 +163,14 @@ const Verifyaccount = () => {
                      * https://getbootstrap.com/docs/4.6/components/forms/#server-side
                      *
                      */
-                    <div class="signup-container">
+                    <div className="signup-container">
                         <h3>Verify Account</h3>
                         <Form>
-                            <div class="form-group ">
+                            <div className="form-group ">
                                 <label for="exampleInputEmail1">Email address</label>
                                 <input
                                     type="email"
-                                    class="form-control"
+                                    className="form-control"
                                     name="email"
                                     placeholder="Enter email address"
                                     onChange={handleChange}
@@ -178,15 +178,15 @@ const Verifyaccount = () => {
                                     value={values.email}
                                 />
                                 {errors.email && touched.email ? (
-                                    <small class="error">{errors.email}</small>
+                                    <small className="error">{errors.email}</small>
                                 ) : null}
                             </div>
 
-                            <div class="form-group">
+                            <div className="form-group">
                                 <label for="exampleInputPassword1">Password</label>
                                 <input
                                     type="text"
-                                    class="form-control"
+                                    className="form-control"
                                     placeholder="Verification Code"
                                     name="code"
                                     onChange={handleChange}
@@ -194,14 +194,14 @@ const Verifyaccount = () => {
                                     value={values.code}
                                 />
                                 {errors.code && touched.code ? (
-                                    <small class="error">{errors.code}</small>
+                                    <small className="error">{errors.code}</small>
                                 ) : null}
                             </div>
                             <small><a href="#" onClick={resendCode}>Resend verification code</a></small>
                             <center>
                                 <button
                                     type="submit"
-                                    class="btn btn-primary"
+                                    className="btn btn-primary"
                                     disabled={!(dirty && isValid)}
                                 >
                                     Submit

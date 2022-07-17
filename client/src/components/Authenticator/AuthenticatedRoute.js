@@ -14,13 +14,11 @@ const AuthenticatedRoute = () => {
 
     //var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
     useEffect(() => {
-        console.log("Inside Authenticated route");
         (async () => {
             let loggedInUser = null;
 
             try {
                 loggedInUser = await userPool.getCurrentUser();
-                console.log("Inside Authenticated route user data" + loggedInUser);
                 // console.log("Authenticated" + loggedInUser.getUserData());
 
                 if (loggedInUser) {
@@ -34,7 +32,6 @@ const AuthenticatedRoute = () => {
         })();
     }, [])
 
-    console.log("Inside Authenticated route: " + isUserValid);
     return (
 
         isUserValid ? <Outlet /> : <Navigate to="/signin" />
