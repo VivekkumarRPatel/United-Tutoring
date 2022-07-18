@@ -14,7 +14,7 @@ const { Title } = Typography;
 
 export default function Availability(props) {
     const [getProcess, setGetProcess] = useState(true)
-    const [availability, setAvailability] = useState({});
+    const [availability, setAvailability] = useState([]);
     // const [slotIdList, setSlotIdList] = useState([]);
     const { auth, setAuth } = props
 
@@ -128,7 +128,7 @@ export default function Availability(props) {
                             }
                         })
         
-        
+                        
                         console.log("After filterring all slots");
                         console.log(finalListedData);
                         setAvailability(finalListedData);    
@@ -137,16 +137,11 @@ export default function Availability(props) {
                     })
                     .catch(function (error) {
                         console.log(error);
-                    }).finally(() => {
-                        setGetProcess(false)
-                    });
-         
+                    })
             })
             .catch(function (error) {
                 console.log(error);
-            }).finally(() => {
-                setGetProcess(false)
-            });
+            })
     }
 
     function bookAppointment(slotid, slotDate) {
