@@ -22,7 +22,7 @@ exports.handler = async (event) => {
     const headers = {
         'Content-Type': 'application/json',
         'access-control-allow-headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
-        'access-control-allow-methods': 'OPTIONS,POST',
+        'access-control-allow-methods': '*',
         'access-control-allow-origin': '*'
     };
     console.log('Received event:', JSON.stringify(event, null, 2));
