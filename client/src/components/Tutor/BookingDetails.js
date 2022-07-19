@@ -20,7 +20,7 @@ export default function BookingDetails(params) {
         var config = {
             method: 'get',
             // url: GET_TUTOR_BOOKINGS + '?id=' + localStorage.getItem('username'),
-            url: 'https://8z9upjgji0.execute-api.us-east-1.amazonaws.com/dev/get-tutor-bookings?id=vasu@gmail.com',
+            url: 'https://8z9upjgji0.execute-api.us-east-1.amazonaws.com/dev/get-tutor-bookings?id=' + localStorage.getItem('username'),
             headers: {}
         };
 

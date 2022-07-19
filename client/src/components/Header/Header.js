@@ -7,11 +7,18 @@ import {
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import axios from 'axios';
 import { Button, Dropdown, Menu, Space } from "antd";
+import { useEffect,useState } from 'react';
 const Header = () => {
-  const api = 'https://b30b41k856.execute-api.us-east-1.amazonaws.com/dev/get-profile-img?id='+localStorage.getItem('username');
+
+  const [profilePic, setProfilePic] = useState([]);
+
+  useEffect(() => {
+
+    console.log("Inside useeffect header");
+    const api = 'https://u9u2p08ohd.execute-api.us-east-1.amazonaws.com/dev/get-profile-img?id='+localStorage.getItem('username');
   axios
   .get(api, {
     headers: {
@@ -21,12 +28,17 @@ const Header = () => {
   })
   .then((response) => {
     console.log("res:"+response.data);
-    localStorage.setItem('profile-img',response.data);
+    //localStorage.setItem('profile-img',response.data.file);
+    setProfilePic(response.data);
     
   })
   .catch((error) => {
     console.error(error);
   });
+
+}, [])
+
+
   const navigate = useNavigate();
 
   const signout = () => {
@@ -45,6 +57,11 @@ const Header = () => {
     cognitoUser.signOut();
     localStorage.removeItem('username');
     localStorage.removeItem('token');
+    localStorage.removeItem('firstnameCloud');
+    localStorage.removeItem('lastnameCloud');
+    localStorage.removeItem('mobilenoCloud');
+
+
     if (localStorage.getItem('tutor')) {
       localStorage.removeItem('tutor');
     }
@@ -122,13 +139,14 @@ const Header = () => {
               <img
               style={{
                 alignSelf: 'center',
-                height: 100,
-                width: 100,
+                height: 50,
+                width: 50,
                 borderWidth: 1,
                 borderRadius: 75
               }}
                 alt=""
-                src={localStorage.getItem('profile-img')}
+                // src={localStorage.getItem('profile-img')}
+                src={profilePic}
               />
             </a>
             <div

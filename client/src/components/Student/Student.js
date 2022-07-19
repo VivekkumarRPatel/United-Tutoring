@@ -42,9 +42,21 @@ export default function Student(props) {
 
         axios(config)
             .then(function (response) {
-                console.log(response.data.tutors);
+                // console.log("tutor data are");
+                // console.log(response.data.tutors.length);
 
-                setTutorData(response.data.tutors)
+                let tutorList=[];
+                let loginUserEmail=localStorage.getItem("username");
+                for(let index=0;index<response.data.tutors.length;index++){
+ 
+                   if(response.data.tutors[index].email!==loginUserEmail){
+
+                    tutorList.push(response.data.tutors[index]);   
+                   }
+                 
+                }
+
+               setTutorData(tutorList);
                 setGetProcess(false)
             })
             .catch(function (error) {

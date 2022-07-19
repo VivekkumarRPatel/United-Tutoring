@@ -58,11 +58,14 @@ const Signin = ( props ) => {
         console.log("value of the token is" + result.getIdToken().getJwtToken());
         localStorage.setItem('token', result.getIdToken().getJwtToken());
         localStorage.setItem('username', result.idToken.payload.email);
+        localStorage.setItem('firstnameCloud', result.idToken.payload.given_name);
+        localStorage.setItem('lastnameCloud', result.idToken.payload.family_name);
+        localStorage.setItem('mobilenoCloud', result.idToken.payload.phone_number);
         toast.success(
           "User logged in succesfully."
         );
       //  window.location.href = '/dashboard';
-        navigate("/dashboard");
+        navigate("/tutor");
         // console.log('access token + ' + result.getAccessToken().getJwtToken());
         // console.log('id token + ' + result.getIdToken().getJwtToken());
         // console.log('refresh token + ' + result.getRefreshToken().getToken());

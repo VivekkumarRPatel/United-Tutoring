@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import AWS from 'aws-sdk';
+import axios from 'axios';
 //import * as AWS from "@aws-sdk/client-sns";
 
 // const SESConfig = {
@@ -64,48 +65,25 @@ const Verifyaccount = () => {
             function (err, result) {
                 if (result == "SUCCESS") {
 
-                    var params1 = {
-                        Protocol: 'email', /* required */
-                        TopicArn: 'arn:aws:sns:us-east-1:861474768799:sendemail', /* required */
-                        // Attributes: {
-                        //   '<attributeName>': 'STRING_VALUE',
-                        //   /* '<attributeName>': ... */
-                        // },
-                        Endpoint: attributeValues.email,
-                        ReturnSubscriptionArn: true
-                    };
 
-                    var response1 = snsClient.subscribe(params1, function (err, data) {
-                        if (err) {
-                            console.log("Inside subscribe  if");
-                            console.log(err, err.stack); }// an error occurred
-                        else { 
-                            console.log("Inside subscribe  else");
-                            console.log(data); }           // successful response
+                const api = 'https://5f0musvxee.execute-api.us-east-1.amazonaws.com/dev/subscribe?id='+username;
+                    
+                    axios
+                    .get(api, {
+                        headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        },
+                        crossDomain: true
+                    })
+                    .then((response) => {
+                        console.log("res:"+response);
+                        navigate("/signin");
+                    })
+                    .catch((error) => {
+                        console.log(error);
                     });
 
-                    var emailIds = [attributeValues.email];
-
-                    var params2 = {
-                        AttributeName: 'FilterPolicy', /* required */
-                        SubscriptionArn: response1.SubscriptionArn, /* required */
-                        AttributeValue: JSON.stringify({ "email": emailIds })
-                    };
-                    snsClient.setSubscriptionAttributes(params2, function (err, data) {
-                        if (err) { 
-                            console.log("Inside setSubscriptionAttributes if");
-                            console.log(err, err.stack); } // an error occurred
-                        else { 
-                            console.log("Inside setSubscriptionAttributes else");
-                            console.log(data); }           // successful response
-                    });
-
-                    const successMessage = result.message;
-                    localStorage.removeItem('username');
-                    toast.success(
-                        successMessage
-                    );
-                    navigate("/signin");
+                   
                 } else {
                     const erroMessage = err.message;
                     toast.error(
