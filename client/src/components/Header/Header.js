@@ -60,7 +60,7 @@ const Header = () => {
     localStorage.removeItem('firstnameCloud');
     localStorage.removeItem('lastnameCloud');
     localStorage.removeItem('mobilenoCloud');
-
+    localStorage.removeItem('userType');
 
     if (localStorage.getItem('tutor')) {
       localStorage.removeItem('tutor');

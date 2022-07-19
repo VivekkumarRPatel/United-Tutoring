@@ -44,11 +44,25 @@ function App() {
           <Routes >
             <Route path='/' element={<AuthenticatedRoute />}>
               <Route path="/home" element={<Home />}></Route>
-              <Route path="/tutor" element={<Tutor auth = {auth} setAuth = {setAuth} />}></Route>
+             
+
+              {localStorage.getItem("student")==="student" &&
               <Route path="/student" element={<Student auth = {auth} setAuth = {setAuth} />}></Route>
+            }
               <Route path="/profile" element={<Profile />}></Route>
-              <Route path="/tutor/availability" element={<Availability auth = {auth} setAuth = {setAuth} />} />
-              <Route path="/tutor/bookings" element={<BookingDetails auth = {auth} setAuth = {setAuth} />} />
+              
+
+             
+              {localStorage.getItem("tutor")==="tutor" &&
+              <Route path="/tutor" element={<Tutor auth = {auth} setAuth = {setAuth} />}></Route>
+            } 
+
+              {localStorage.getItem("tutor")==="tutor" &&  
+              <Route path="/tutor/availability" element={<Availability auth = {auth} setAuth = {setAuth} />} />}
+
+              {localStorage.getItem("tutor")==="tutor" &&
+                <Route path="/tutor/bookings" element={<BookingDetails auth = {auth} setAuth = {setAuth} />} />
+              }                       
             </Route>
           </Routes>
 

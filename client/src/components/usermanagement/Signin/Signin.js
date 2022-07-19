@@ -65,7 +65,17 @@ const Signin = ( props ) => {
           "User logged in succesfully."
         );
       //  window.location.href = '/dashboard';
-        navigate("/tutor");
+      if( localStorage.getItem('tutor') ==="tutor" && localStorage.getItem('student') ==="student"  ){
+        //navigate("/tutor");
+        window.location.href = '/tutor';
+      }else if(localStorage.getItem('tutor') ==="tutor"){
+        //navigate("/tutor");
+        window.location.href = '/tutor';
+      }else if(localStorage.getItem('student') ==="student"){
+        //navigate("/student");
+        window.location.href = '/student';
+      }
+
         // console.log('access token + ' + result.getAccessToken().getJwtToken());
         // console.log('id token + ' + result.getIdToken().getJwtToken());
         // console.log('refresh token + ' + result.getRefreshToken().getToken());
