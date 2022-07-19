@@ -2,23 +2,31 @@ import "./Profile.css";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import CreatableSelect from 'react-select/creatable';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 //https://react-select.com/home
+import {
+  CognitoUserPool,
+  CognitoUserAttribute,
+  CognitoUser,
+  AuthenticationDetails
+} from "amazon-cognito-identity-js";
+import pooldetails from "../usermanagement/pooldata.json";
+import { ConsoleSqlOutlined } from "@ant-design/icons";
 
-let skillvalues = [
-  { value: 'ocean', label: 'Ocean' },
-  { value: 'english', label: 'English' },
-  { value: 'chinese', label: 'Chinese' },
-  { value: 'roman', label: 'Roman' }
-]
 
-let coursesValue = [
-  { value: 'cs', label: 'CS' },
-  { value: 'mechanical', label: 'ELE' },
-  { value: 'electrical', label: 'ME' },
-  { value: 'ASDC', label: 'MACS' }
-]
+
+// let skillvalues = [
+//   { value: 'ocean', label: 'Ocean' },
+//   { value: 'english', label: 'English' },
+//   { value: 'chinese', label: 'Chinese' },
+//   { value: 'roman', label: 'Roman' }
+// ]
+
+
+let skillvalues = [];
+
+let coursesValue = [];
 
 
 const onChangeHandle = (value) => {
@@ -244,8 +252,8 @@ const GeneralForm = ({ values,
     let reader = new FileReader();
     reader.onloadend = () => {
       setProfilePic(reader.result);
-     };
-     reader.readAsDataURL(file);
+    };
+    reader.readAsDataURL(file);
   };
 
 
@@ -263,10 +271,8 @@ const GeneralForm = ({ values,
             onChange={handleChange}
             onBlur={handleBlur}
             value={values.firstName}
+            readOnly={true}
           />
-          {errors.firstName && touched.firstName ? (
-            <small className="error">{errors.firstName}</small>
-          ) : null}
         </div>
         <div className="form-group ">
           <label>Lastname</label>
@@ -278,10 +284,8 @@ const GeneralForm = ({ values,
             onChange={handleChange}
             onBlur={handleBlur}
             value={values.lastName}
+            readOnly={true}
           />
-          {errors.lastName && touched.lastName ? (
-            <small className="error">{errors.lastName}</small>
-          ) : null}
         </div>
         <div className="form-group ">
           <label>Email</label>
@@ -293,10 +297,8 @@ const GeneralForm = ({ values,
             onChange={handleChange}
             onBlur={handleBlur}
             value={values.email}
+            readOnly={true}
           />
-          {errors.email && touched.email ? (
-            <small className="error">{errors.email}</small>
-          ) : null}
         </div>
         <div className="form-group ">
           <label>Mobile No</label>
@@ -308,10 +310,8 @@ const GeneralForm = ({ values,
             onChange={handleChange}
             onBlur={handleBlur}
             value={values.mobileNo}
+            readOnly={true}
           />
-          {errors.mobileNo && touched.mobileNo ? (
-            <small className="error">{errors.mobileNo}</small>
-          ) : null}
         </div>
         <div className="form-group">
           <img
@@ -334,10 +334,9 @@ const GeneralForm = ({ values,
           <button
             type="submit"
             className="btn btn-primary"
-            disabled={!(dirty && isValid)}
             onSubmit={handleSubmit}
           >
-            Submit Student
+            Upload profile picture
           </button>
         </center>
       </Form>
@@ -346,12 +345,18 @@ const GeneralForm = ({ values,
 }
 
 
+// localStorage.setItem('username', result.idToken.payload.email);
+// localStorage.setItem('firstname', result.idToken.payload.given_name);
+// localStorage.setItem('lastname', result.idToken.payload.family_name);
+// localStorage.setItem('mobileno', result.idToken.payload.phone_number);
+
+
 
 const generalValues = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  mobileNo: ""
+  firstName: localStorage.getItem('firstnameCloud'),
+  lastName: localStorage.getItem('lastnameCloud'),
+  email: localStorage.getItem('username'),
+  mobileNo: localStorage.getItem('mobilenoCloud')
 }
 
 
@@ -369,16 +374,16 @@ const tutorInitialValues = {
   fieldExperience: 0
 }
 
-const generalValidator = Yup.object().shape({
-  firstName: Yup.string().required("First name is required"),
+// const generalValidator = Yup.object().shape({
+//   firstName: Yup.string().required("First name is required"),
 
-  lastName: Yup.string().required("Last name is required"),
+//   lastName: Yup.string().required("Last name is required"),
 
-  mobileNo: Yup.string().required("Mobile no is required"),
-  email: Yup.string()
-    .required("Email is required")
-    .email("Invalid Email Address"),
-});
+//   mobileNo: Yup.string().required("Mobile no is required"),
+//   email: Yup.string()
+//     .required("Email is required")
+//     .email("Invalid Email Address"),
+// });
 
 const studentValidator = Yup.object().shape({
   university: Yup.string().required("Univetsity name is required."),
@@ -401,6 +406,111 @@ const Profile = () => {
 
   const [profilePic, setProfilePic] = useState([]);
 
+
+  useEffect(() => {
+
+    //This API is being called to retrieve profile image on page load.  
+    const api = 'https://u9u2p08ohd.execute-api.us-east-1.amazonaws.com/dev/get-profile-img?id=' + localStorage.getItem('username');
+    axios
+      .get(api, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        crossDomain: true
+      })
+      .then((response) => {
+        console.log("res:" + response.data);
+        setProfilePic(response.data);
+        //localStorage.setItem('profile-img',response.data);
+
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+
+
+    //This API is being called to retrieve tutor details on update tutor details submit event
+    var data = JSON.stringify({
+      "id": localStorage.getItem('username'),
+      "userType": localStorage.getItem('userType')
+    });
+    
+    var config = {
+      method: 'post',
+      url: 'https://8z9upjgji0.execute-api.us-east-1.amazonaws.com/dev/get-user-details',
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : data
+    };
+    
+    axios(config)
+    .then(function (response) {
+      console.log(response.data);
+      console.log(JSON.stringify(response.data));
+      
+      if(localStorage.getItem("tutor")){
+
+      tutorInitialValues.desc = response.data.expdesc;
+      tutorInitialValues.fieldExperience = response.data.expyears;
+      let skillsString = response.data.skills;
+      if (skillsString) {
+        skillvalues=[];
+
+
+        let skiilArray = skillsString.split(",");
+
+        for (let index = 0; index < skiilArray.length; index++) {
+
+          let skillStringJson = { value: skiilArray[index], label: skiilArray[index].toString().toUpperCase() };
+    
+          skillvalues.push(skillStringJson);
+        }
+        console.log("Skills are");
+        console.log(skillvalues);
+        setSkills(skillvalues);
+      }
+      
+      console.log("After retrieving user skills ");
+      console.log(skillvalues);
+    }
+
+    if(localStorage.getItem("student")){
+      coursesValue=[];  
+      studentInitialValues.university=response.data.university;
+      studentInitialValues.program=response.data.program;
+      studentInitialValues.startYear=response.data.startyear;
+      studentInitialValues.endYear=response.data.endyear;
+
+      let courseString = response.data.courses;
+      let courseArray = courseString.split(",");
+
+      for (let index = 0; index < courseArray.length; index++) {
+
+        let courseStringJson = { value: courseArray[index], label: courseArray[index].toString().toUpperCase() };
+       
+        coursesValue.push(courseStringJson);
+      }
+      setCourses(coursesValue);
+      
+    }
+
+
+
+
+
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+    
+
+
+  }, [])
+
+
+
   const tutorSubmit = (values) => {
     let skillStr = "";
     console.log("tutor" + values.desc);
@@ -410,13 +520,15 @@ const Profile = () => {
     skillStr = skillStr.slice(0, -1);
     //console.log(skills[0].value)
     console.log(values.fieldExperience)
-    const api = 'https://1apdq3a4q0.execute-api.us-east-1.amazonaws.com/dev/savestudentdetails';
+    console.log("Skill string is");
+    console.log(skillStr);
+    const api = 'https://8z9upjgji0.execute-api.us-east-1.amazonaws.com/dev/save-user-details';
     const data = {
-      "userType" : localStorage.getItem('userType'),
-      "email" : localStorage.getItem('username'),
-      "skills" :skillStr,
-      "expyears" : values.fieldExperience,
-      "expdesc" : values.desc
+      "userType": localStorage.getItem('userType'),
+      "email": localStorage.getItem('username'),
+      "skills": skillStr,
+      "expyears": values.fieldExperience,
+      "expdesc": values.desc
     };
     axios
       .post(api, data, {
@@ -425,8 +537,9 @@ const Profile = () => {
         }
       })
       .then((response) => {
-        console.log("res:"+response);
-        
+        console.log("res:" + response);
+        window.location.reload();
+
       })
       .catch((error) => {
         console.log(error);
@@ -441,15 +554,15 @@ const Profile = () => {
       courseStr = courseStr + course.value + ",";
     });
     courseStr = courseStr.slice(0, -1);
-    const api = 'https://1apdq3a4q0.execute-api.us-east-1.amazonaws.com/dev/savestudentdetails';
+    const api = 'https://8z9upjgji0.execute-api.us-east-1.amazonaws.com/dev/save-user-details';
     const data = {
-      "userType" : localStorage.getItem('userType'),
-      "email" : localStorage.getItem('username'),
-      "university" : values.university,
-      "program" : values.program,
-      "courses" : courseStr,
-      "startyear" : values.startYear,
-      "endyear" : values.endYear
+      "userType": localStorage.getItem('userType'),
+      "email": localStorage.getItem('username'),
+      "university": values.university,
+      "program": values.program,
+      "courses": courseStr,
+      "startyear": values.startYear,
+      "endyear": values.endYear
     };
     axios
       .post(api, data, {
@@ -459,8 +572,9 @@ const Profile = () => {
         crossDomain: true
       })
       .then((response) => {
-        console.log("res:"+response);
-        
+        console.log("res:" + response);
+        window.location.reload();
+
       })
       .catch((error) => {
         console.log(error);
@@ -469,21 +583,23 @@ const Profile = () => {
 
   const generalSubmit = (values) => {
     console.log(profilePic)
-    const api = 'https://2qc0kol8wa.execute-api.us-east-1.amazonaws.com/default/upload-to-s3';
+    const api = 'https://u9u2p08ohd.execute-api.us-east-1.amazonaws.com/dev/save-profile-img';
     const data = {
-      "file" : profilePic,
-      "email" : localStorage.getItem('username')
+      "file": profilePic,
+      "email": localStorage.getItem('username')
     };
     axios
-      .post(api, data, {
+      .put(api, data, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
       })
       .then((response) => {
-        console.log("res:\n"+response.data.file);
-        localStorage.setItem('img',response.data.file);
+        console.log("res:\n" + response.data.file);
+        //localStorage.setItem('img',response.data.file);
+        setProfilePic(response.data.file);
         window.location.reload();
+        //window.location.href = '/profile';
       })
       .catch((error) => {
         console.log(error);
@@ -494,28 +610,28 @@ const Profile = () => {
     <div className="signup-container">
       <Formik
         initialValues={generalValues}
-        validationSchema={generalValidator}
+        // validationSchema={generalValidator}
         onSubmit={generalSubmit}
         // children={GeneralForm}
-        component={(props) => <GeneralForm {...props} setProfilePic={setProfilePic}  profilePic={profilePic} ></GeneralForm>}
+        component={(props) => <GeneralForm {...props} setProfilePic={setProfilePic} profilePic={profilePic} ></GeneralForm>}
 
 
       />
-      {localStorage.getItem('tutor') !== null ? 
-      <Formik
-        initialValues={tutorInitialValues}
-        validationSchema={tutorValidator}
-        onSubmit={tutorSubmit}
-        component={(props) => <TutorForm {...props} setSkills={setSkills} skills={skills}></TutorForm>}
-      />:null}
+      {localStorage.getItem('tutor') !== null ?
+        <Formik
+          initialValues={tutorInitialValues}
+          validationSchema={tutorValidator}
+          onSubmit={tutorSubmit}
+          component={(props) => <TutorForm {...props} setSkills={setSkills} skills={skills}></TutorForm>}
+        /> : null}
 
-{localStorage.getItem('student') !== null ? 
-      <Formik
-        initialValues={studentInitialValues}
-        validationSchema={studentValidator}
-        onSubmit={studentSubmit}
-        component={(props) => <StudentForm {...props} setCourses={setCourses} courses={courses}></StudentForm>}
-      />:null}
+      {localStorage.getItem('student') !== null ?
+        <Formik
+          initialValues={studentInitialValues}
+          validationSchema={studentValidator}
+          onSubmit={studentSubmit}
+          component={(props) => <StudentForm {...props} setCourses={setCourses} courses={courses}></StudentForm>}
+        /> : null}
 
     </div>
   );
