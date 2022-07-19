@@ -16,7 +16,10 @@ export default function BookingDetails(params) {
     const [getProcess, setGetProcess] = useState(true);
 
     useEffect(() => {
+        loadBookings();
+    }, [])
 
+    function loadBookings() {
         var config = {
             method: 'get',
             // url: GET_TUTOR_BOOKINGS + '?id=' + localStorage.getItem('username'),
@@ -26,27 +29,34 @@ export default function BookingDetails(params) {
 
         axios(config)
             .then(async function (response) {
+
+                var rejecteds = [];
+                var confirms = [];
+                var pendings = [];
                 await response.data?.Bookings.map((booking) => {
                     if (booking.bookingStatus === 'REJECT') {
-                        setRejectedBookings([...rejectedBookings, booking])
+                        rejecteds = [...rejecteds,booking];
+                        // setRejectedBookings([...rejectedBookings, booking])
                     } else if (booking.bookingStatus === 'CONFIRM') {
-                        console.log(booking,'confirm');
-                        setConfirmBookings([...confirmBookings, booking])
+                        confirms = [...confirms,booking]
+                        // console.log(booking,'confirm');
+                        // setConfirmBookings([...confirmBookings, booking])
                     } else if (booking.bookingStatus === 'PENDING') {
-                        setPendingBookings([...pendingBookings, booking])
+                        pendings = [...pendings,booking]
+                        // console.log(pendingBookings);
+                        // setPendingBookings([...pendingBookings, booking])
                     }
                 })
-                console.log(confirmBookings,'in confirm');
-                console.log(pendingBookings,'in pending');
-                console.log(rejectedBookings,'in reject');
                 // setTempData(response.data.Bookings)
-                // console.log(tempData);
+                setConfirmBookings(confirms);
+                setPendingBookings(pendings);
+                setRejectedBookings(rejecteds);
                 setGetProcess(false)
             })
             .catch(function (error) {
                 console.log(error);
             });
-    }, [])
+    }
 
     function confirmBooking(record) {
         setGetProcess(true);
@@ -72,16 +82,48 @@ export default function BookingDetails(params) {
             .then(function (response) {
                 message.success('Booking Confirmed');
                 console.log(JSON.stringify(response.data));
+                loadBookings();
             })
             .catch(function (error) {
+                loadBookings();
                 console.log(error);
             }).finally(()=>{
                 setGetProcess(false);
             });
     }
     
-    function rejectBooking() {
-        
+    function rejectBooking(record) {
+        setGetProcess(true);
+
+        var data = JSON.stringify({
+            "bookingId": record.bookingId,
+            "tutorId": localStorage.getItem('username'),
+            "studentId": record.studentId,
+            "slotId": record.slotId,
+            "action": "REJECT"
+          });
+
+          var config = {
+            method: 'post',
+            url: UPDATE_BOOKING,
+            headers: { 
+              'Content-Type': 'application/json'
+            },
+            data : data
+          };
+
+        axios(config)
+            .then(function (response) {
+                message.success('Booking REJECTED');
+                console.log(JSON.stringify(response.data));
+                loadBookings();
+            })
+            .catch(function (error) {
+                loadBookings();
+                console.log(error);
+            }).finally(()=>{
+                setGetProcess(false);
+            });
     }
 
     return (
@@ -107,6 +149,8 @@ export default function BookingDetails(params) {
                                 }}
                             />
                             <Column title="Date" dataIndex="date" key="date" />
+                            <Column title="Date" dataIndex="startTime" key="startTime" />
+                            <Column title="Date" dataIndex="endTime" key="endTime" />
                             <Column
                                 key="action"
                                 render={(_, record) => {
@@ -140,6 +184,8 @@ export default function BookingDetails(params) {
                                 }}
                             />
                             <Column title="Date" dataIndex="date" key="date" />
+                            <Column title="Date" dataIndex="startTime" key="startTime" />
+                            <Column title="Date" dataIndex="endTime" key="endTime" />
                         </Table>
 
                         <Title level={3}> Confirm Bookings </Title>
@@ -151,13 +197,15 @@ export default function BookingDetails(params) {
                                 key="bookingStatus"
                                 render={(bookingStatus) => {
                                     return (
-                                        <Tag color="red">
+                                        <Tag color="green">
                                             {bookingStatus}
                                         </Tag>
                                     )
                                 }}
                             />
                             <Column title="Date" dataIndex="date" key="date" />
+                            <Column title="Date" dataIndex="startTime" key="startTime" />
+                            <Column title="Date" dataIndex="endTime" key="endTime" />
                         </Table>
                     </div>
             }
