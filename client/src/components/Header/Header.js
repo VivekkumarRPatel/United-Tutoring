@@ -18,7 +18,7 @@ const Header = () => {
   useEffect(() => {
 
     console.log("Inside useeffect header");
-    const api = 'https://u9u2p08ohd.execute-api.us-east-1.amazonaws.com/dev/get-profile-img?id='+localStorage.getItem('username');
+    const api = 'https://41bsajs9hj.execute-api.us-east-1.amazonaws.com/dev/get-profile-img?id='+localStorage.getItem('username');
   axios
   .get(api, {
     headers: {
