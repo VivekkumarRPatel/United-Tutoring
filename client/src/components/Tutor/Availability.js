@@ -42,7 +42,7 @@ export default function Availability(props) {
             method: 'post',
             url: GET_AVAILABILITY,
             headers: {
-                'Content-Type': 'application/json'
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             data: data
         };
@@ -84,7 +84,7 @@ export default function Availability(props) {
                     method: 'post',
                     url: GET_BOOKING_SLOT_PENDING_STATUS,
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
                     data: searchParam
                 };
@@ -156,12 +156,16 @@ export default function Availability(props) {
             method: 'post',
             url: SAVE_SLOT_BOOKING,
             data: data,
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
         };
 
         axios(config)
             .then(function (response) {
 
                 if (response.data.slotBooked) {
+                    getAvailability();
                     console.log("slot has been booked");
                 } else {
                     console.log("slot has not been booked");

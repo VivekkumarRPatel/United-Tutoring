@@ -24,7 +24,9 @@ export default function BookingDetails(params) {
             method: 'get',
             // url: GET_TUTOR_BOOKINGS + '?id=' + localStorage.getItem('username'),
             url: 'https://8z9upjgji0.execute-api.us-east-1.amazonaws.com/dev/get-tutor-bookings?id=' + localStorage.getItem('username'),
-            headers: {}
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
         };
 
         axios(config)
@@ -73,7 +75,7 @@ export default function BookingDetails(params) {
             method: 'post',
             url: UPDATE_BOOKING,
             headers: { 
-              'Content-Type': 'application/json'
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             data : data
           };
@@ -107,7 +109,7 @@ export default function BookingDetails(params) {
             method: 'post',
             url: UPDATE_BOOKING,
             headers: { 
-              'Content-Type': 'application/json'
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             data : data
           };

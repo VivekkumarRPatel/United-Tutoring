@@ -35,7 +35,8 @@ export default function Student(props) {
             method: 'post',
             url: GET_TUTOR_DETAILS,
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',  
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             data: data
         };
@@ -43,8 +44,10 @@ export default function Student(props) {
         axios(config)
             .then(function (response) {
                 // console.log("tutor data are");
+                console.log(response.data);
                 // console.log(response.data.tutors.length);
-
+                // const jsonData=JSON.parse(response.data);
+                // console.log(jsonData);
                 let tutorList=[];
                 let loginUserEmail=localStorage.getItem("username");
                 for(let index=0;index<response.data.tutors.length;index++){
@@ -77,7 +80,9 @@ export default function Student(props) {
                 method: 'post',
                 url: GET_TUTOR_DETAILS,
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    
                 },
                 data: data
             };

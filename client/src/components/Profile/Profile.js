@@ -410,7 +410,7 @@ const Profile = () => {
   useEffect(() => {
 
     //This API is being called to retrieve profile image on page load.  
-    const api = 'https://u9u2p08ohd.execute-api.us-east-1.amazonaws.com/dev/get-profile-img?id=' + localStorage.getItem('username');
+    const api = 'https://41bsajs9hj.execute-api.us-east-1.amazonaws.com/dev/get-profile-img?id=' + localStorage.getItem('username');
     axios
       .get(api, {
         headers: {
@@ -438,13 +438,15 @@ const Profile = () => {
     
     var config = {
       method: 'post',
-      url: 'https://8z9upjgji0.execute-api.us-east-1.amazonaws.com/dev/get-user-details',
+      url: 'https://41bsajs9hj.execute-api.us-east-1.amazonaws.com/dev/get-user-details',
       headers: { 
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
       },
       data : data
     };
     
+
     axios(config)
     .then(function (response) {
       console.log(response.data);
@@ -453,11 +455,10 @@ const Profile = () => {
       if(localStorage.getItem("tutor")){
 
       tutorInitialValues.desc = response.data.expdesc;
-      tutorInitialValues.fieldExperience = response.data.expyears;
+      tutorInitialValues.fieldExperience = parseInt(response.data.expyears);
       let skillsString = response.data.skills;
       if (skillsString) {
         skillvalues=[];
-
 
         let skiilArray = skillsString.split(",");
 
@@ -497,9 +498,6 @@ const Profile = () => {
     }
 
 
-
-
-
     })
     .catch(function (error) {
       console.log(error);
@@ -522,12 +520,12 @@ const Profile = () => {
     console.log(values.fieldExperience)
     console.log("Skill string is");
     console.log(skillStr);
-    const api = 'https://8z9upjgji0.execute-api.us-east-1.amazonaws.com/dev/save-user-details';
+    const api = 'https://41bsajs9hj.execute-api.us-east-1.amazonaws.com/dev/save-user-details';
     const data = {
       "userType": localStorage.getItem('userType'),
       "email": localStorage.getItem('username'),
       "skills": skillStr,
-      "expyears": values.fieldExperience,
+      "expyears": values.fieldExperience.toString(),
       "expdesc": values.desc
     };
     axios
@@ -554,7 +552,7 @@ const Profile = () => {
       courseStr = courseStr + course.value + ",";
     });
     courseStr = courseStr.slice(0, -1);
-    const api = 'https://8z9upjgji0.execute-api.us-east-1.amazonaws.com/dev/save-user-details';
+    const api = 'https://41bsajs9hj.execute-api.us-east-1.amazonaws.com/dev/save-user-details';
     const data = {
       "userType": localStorage.getItem('userType'),
       "email": localStorage.getItem('username'),
@@ -583,7 +581,7 @@ const Profile = () => {
 
   const generalSubmit = (values) => {
     console.log(profilePic)
-    const api = 'https://u9u2p08ohd.execute-api.us-east-1.amazonaws.com/dev/save-profile-img';
+    const api = 'https://41bsajs9hj.execute-api.us-east-1.amazonaws.com/dev/save-profile-img';
     const data = {
       "file": profilePic,
       "email": localStorage.getItem('username')

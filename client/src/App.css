@@ -36,3 +36,7 @@
     transform: rotate(360deg);
   }
 }
+
+.container {
+  min-height: 10vh;
+}

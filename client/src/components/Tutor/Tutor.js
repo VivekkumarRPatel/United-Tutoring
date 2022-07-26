@@ -51,7 +51,7 @@ const Tutor=( props )=>{
         method: 'post',
         url: SAVE_AVAILABILITY,
         headers: { 
-          'Content-Type': 'application/json'
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         data : data,
       };
