@@ -28,6 +28,9 @@ const Signup = () => {
   const registerUser = (attributeValues) => {
     console.log(attributeValues.usertype.toString());
 
+
+    //Reference taken from https://iwconnect.com/cognito-user-pool-sign-register-sign-up-user-process/
+
     const attributeList = [
       new CognitoUserAttribute({
         Name: "family_name",
@@ -97,6 +100,8 @@ const Signup = () => {
     
   };
 
+
+  //Reference taken from https://formik.org/
   return (
     <Formik
       initialValues={initialValues}

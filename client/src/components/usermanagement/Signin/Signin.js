@@ -27,6 +27,8 @@ const Signin = ( props ) => {
 
     console.log(attributeValues.email);
 
+//Reference taken from https://iwconnect.com/cognito-user-pool-sign-register-sign-up-user-process/
+
     //Initialize instance with AWS cognito user pool data
     const userPool = new CognitoUserPool(pooldetails);
 
@@ -90,6 +92,8 @@ const Signin = ( props ) => {
 
   };
 
+
+  //Reference taken from https://formik.org/
   return (
     <Formik
       initialValues={initialValues}
