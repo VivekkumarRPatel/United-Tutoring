@@ -165,6 +165,7 @@ export default function Availability(props) {
             .then(function (response) {
 
                 if (response.data.slotBooked) {
+                    getAvailability();
                     console.log("slot has been booked");
                 } else {
                     console.log("slot has not been booked");

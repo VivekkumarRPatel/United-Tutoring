@@ -438,7 +438,7 @@ const Profile = () => {
     
     var config = {
       method: 'post',
-      url: 'https://8z9upjgji0.execute-api.us-east-1.amazonaws.com/dev/get-user-details',
+      url: 'https://41bsajs9hj.execute-api.us-east-1.amazonaws.com/dev/get-user-details',
       headers: { 
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`
