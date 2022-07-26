@@ -3,7 +3,7 @@ const s3 = new aws.S3();
 var body = "";
 async function getimg(id) {
     return new Promise(function(resolve, reject) {
-
+        //reference taken from https://stackoverflow.com/questions/38831829/nodejs-aws-sdk-s3-generate-presigned-url
         const myBucket = 'unitedtutoring-profile-images'
         const myKey = id
         const signedUrlExpireSeconds = 60 * 5
