@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const requestPromise = require("request-promise");
 
 async function updateBookingStatus(bookingId, status) {
-
+//reference taken from - https://dzone.com/articles/update-dynamodb-items-withnbspnodejs
     const params = {
         TableName: "bookingdetails",
         Key: {
@@ -95,6 +95,7 @@ sns.publish(params, function(err, data) {
 });
 }
 
+//reference taken from - https://devforum.zoom.us/t/help-understanding-how-to-create-meeting-using-backend/8496/2
 async function generateZoomLink(){
     return new Promise(function(resolve, reject) {
         const payload = {
@@ -140,7 +141,7 @@ async function generateZoomLink(){
 }
 exports.handler = async (event) => {
 await generateZoomLink();
-var topicArn = 'arn:aws:sns:us-east-1:861474768799:sendBookingUpdate';
+var topicArn = 'arn:aws:sns:us-east-1:861474768799:sendBookingUpdate'; //topic arn of SNS
     let body;
     let statusCode = '200';
     const headers = {
@@ -167,7 +168,7 @@ var topicArn = 'arn:aws:sns:us-east-1:861474768799:sendBookingUpdate';
         var messageTutor = "zoom link:"+tutorLink;
         var messageStudent = "zoom link:"+studentLink;
         var subject = "Booking is Confirmed";
-        //send email to tutor and student 
+        //send email to both tutor and student with zoom links
         await sendEmailNotification(tutorId,messageTutor,subject,topicArn);
         await sendEmailNotification(studentId,messageStudent,subject,topicArn);
 
@@ -177,7 +178,7 @@ var topicArn = 'arn:aws:sns:us-east-1:861474768799:sendBookingUpdate';
          var message = "booking rejected";
          var subject = "Your Booking is Rejected";
          var emailId = '['+studentId+']';
-         //send email to student
+         //send email to student to notify rejection
          await sendEmailNotification(emailId,message,subject,topicArn);   
     }
 
