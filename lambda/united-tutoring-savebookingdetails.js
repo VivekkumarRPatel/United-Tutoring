@@ -38,7 +38,7 @@ async function saveBooking(bookingno, tutorid, studentid, status,slotId,slotdate
     };
 
     return new Promise(function(resolve, reject) {
-
+        //reference taken from - https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/dynamodb-example-table-read-write.html
         dynamodb.putItem(params, function(err, data) {
             if (err) {
                 console.log(err)
@@ -69,11 +69,8 @@ exports.handler = async (event) => {
         let studentid = body.studentid;
         let slotid = body.slotid;
         let slotDate = body.slotDate;
-        let status="PENDING";
-        let bookingno="b"+Math.random().toString().substring(2, 8);
-    
-        console.log("Booking Id is");
-        console.log(bookingno);
+        let status="PENDING"; //booking will first be in pending status
+        let bookingno="b"+Math.random().toString().substring(2, 8); //generating booking number
     
         const customRes={slotBooked:false,message:""}
         
