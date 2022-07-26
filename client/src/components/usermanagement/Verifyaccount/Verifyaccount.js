@@ -118,7 +118,6 @@ const Verifyaccount = () => {
 
 
     //Reference taken from https://formik.org/
-
     return (
         <Formik
             initialValues={initialValues}
