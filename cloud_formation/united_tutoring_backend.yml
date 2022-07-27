@@ -1,1 +1,1580 @@
+############################################################################################################
+# CSCI 5409 Cloud Computing
+# Group 23 - 3 Musketeers                                                                                  
+# Resource creation:                                                                                       
+# - Cognito User Pool                                                                                      
+# - Cognito App Client     
+# - 5 DynamoDB tables                                                                                       
+# - 12 Lambda Functions   
+# - 1 EventBridge Rule                                                                                    
+# - 11 API gateway: resources and methods                                                                  
+# - Lambda permissions                                                                                      
+#                                                                                                          
+# Reference taken from-                                                                                     
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cognito-userpool.html        
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cognito-userpoolclient.html  
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-dynamodb-table.html
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html         
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-permission.html 
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-events-rule.html
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-restapi.html      
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-resource.html     
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-method.html 
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/quickref-dynamodb.html
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/quickref-lambda.html
 
+############################################################################################################
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  CognitoDomain:
+      Type: String
+      MinLength: 3
+      MaxLength: 63
+      AllowedPattern: ^[a-z0-9](?:[a-z0-9\-]{0,61}[a-z0-9])?$
+      Description: Enter a string. Must be alpha numeric 3-63 in length.
+      Default: unitedtutoringusers
+
+  BucketName:
+    Type: String
+    Default: united-tutoring-lambda
+  PDynamoDBAvailability:
+    Type: String
+    Default: availability
+  PDynamoDBBookingDetails:
+    Type: String
+    Default: bookingdetails
+  PDynamoDBSlots:
+    Type: String
+    Default: slots
+  PDynamoDBStudentDetails:
+    Type: String
+    Default: student-details
+  PDynamoDBTutorDetails:
+    Type: String
+    Default: tutor-details
+  PLambdaCronJob:
+    Type: String
+    Default: united-tutoring-cronjob
+  PLambdaGetSlotDetails:
+    Type: String
+    Default: united-tutoring-getslotdetails
+  PLambdaSaveAvailability:
+    Type: String
+    Default: united-tutoring-save-availability
+  PLambdaGetBookingSlotInPending:
+    Type: String
+    Default: united-tutoring-getBookingSlotInPending
+  PLambdaGetProfileImg:
+    Type: String
+    Default: united-tutoring-get-profile-img
+  PLambdaSaveProfileImg:
+    Type: String
+    Default: united-tutoring-save-profile-img
+  PLambdasSaveUserDetails:
+    Type: String
+    Default: united-tutoring-save-user-details
+  PLambdaUpdateRequest:
+    Type: String
+    Default: united-tutoring-updateRequest
+  PLambdaGetTutorBookings:
+    Type: String
+    Default: united-tutoring-get-tutor-bookings
+  PLambdaSubscribeForEmailNotification:
+    Type: String
+    Default: united-tutoring-subscribeForEmailNotification
+  PLambdaGetUserDetails:
+    Type: String
+    Default: united-tutoring-get-user-details
+  PLambdaSaveBookingDetails:
+    Type: String
+    Default: united-tutoring-savebookingdetails
+  PCronJobRule:
+    Type: String
+    Default: united-tutoring-cron-job-rule
+
+Resources:
+  UserPool:
+    Type: "AWS::Cognito::UserPool"
+    
+    Properties:
+      UsernameConfiguration: 
+        CaseSensitive: false
+      Schema:
+        - Name: given_name
+          AttributeDataType: String
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: true
+          StringAttributeConstraints:
+            MinLength: "0"
+            MaxLength: "2048"
+        - Name: family_name
+          AttributeDataType: String
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: true
+          StringAttributeConstraints:
+            MinLength: "0"
+            MaxLength: "2048"
+        - Name: email
+          AttributeDataType: String
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: true
+          StringAttributeConstraints:
+            MinLength: "0"
+            MaxLength: "2048"
+        - Name: phone_number
+          AttributeDataType: String
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: true
+          StringAttributeConstraints:
+              MinLength: "0"
+              MaxLength: "2048"
+        - Name: userType
+          AttributeDataType: String
+          DeveloperOnlyAttribute: false
+          Mutable: true
+          Required: false
+          StringAttributeConstraints:
+              MinLength: "0"
+              MaxLength: "2048"
+      AutoVerifiedAttributes:
+        - email
+      UserPoolName: !Sub ${CognitoDomain}-user-pool
+      VerificationMessageTemplate:
+        DefaultEmailOption: CONFIRM_WITH_CODE
+
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref UserPool 
+      AllowedOAuthFlowsUserPoolClient: true
+      GenerateSecret: false
+      CallbackURLs:
+        - http://localhost:3000
+      AllowedOAuthFlows:
+        - code
+        - implicit
+      AllowedOAuthScopes:
+        - openid
+      SupportedIdentityProviders:
+        - COGNITO
+
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: !Ref CognitoDomain
+      UserPoolId: !Ref UserPool
+      
+
+  LambdaCronJob:
+      Type: AWS::Lambda::Function
+      Properties:
+        FunctionName: !Ref PLambdaCronJob
+        Handler: index.handler
+        Role: arn:aws:iam::861474768799:role/cronjob-role
+        Code:
+          S3Bucket: !Ref BucketName
+          S3Key: cronjob.zip
+        Runtime: nodejs12.x
+        Timeout: 5
+        TracingConfig:
+          Mode: Active
+    
+  LambdaGetSlotDetails:
+      Type: AWS::Lambda::Function
+      Properties:
+        FunctionName: !Ref PLambdaGetSlotDetails
+        Handler: index.handler
+        Role: arn:aws:iam::861474768799:role/service-role/role-dynamodb
+        Code:
+          S3Bucket: !Ref BucketName
+          S3Key: getslotdetails.zip
+        Runtime: nodejs12.x
+        Timeout: 5
+        TracingConfig:
+          Mode: Active
+
+  LambdaGetSlotDetailsPermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:invokeFunction'
+      FunctionName:
+        'Fn::GetAtt':
+          - LambdaGetSlotDetails
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        'Fn::Join':
+          - ''
+          - - 'arn:aws:execute-api:'
+            - Ref: 'AWS::Region'
+            - ':'
+            - Ref: 'AWS::AccountId'
+            - ':'
+            - Ref: UnitedTutoringAPIs
+            - /*/POST/get-availability
+
+  LambdaSaveAvailability:
+      Type: AWS::Lambda::Function
+      Properties:
+        FunctionName: !Ref PLambdaSaveAvailability
+        Handler: index.handler
+        Role: arn:aws:iam::861474768799:role/service-role/role-dynamodb
+        Code:
+          S3Bucket: !Ref BucketName
+          S3Key: save-availability.zip
+        Runtime: nodejs12.x
+        Timeout: 5
+        TracingConfig:
+          Mode: Active
+
+  LambdaSaveAvailabilityPermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:invokeFunction'
+      FunctionName:
+        'Fn::GetAtt':
+          - LambdaSaveAvailability
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        'Fn::Join':
+          - ''
+          - - 'arn:aws:execute-api:'
+            - Ref: 'AWS::Region'
+            - ':'
+            - Ref: 'AWS::AccountId'
+            - ':'
+            - Ref: UnitedTutoringAPIs
+            - /*/POST/save-availability
+
+  LambdaGetBookingSlotInPending:
+      Type: AWS::Lambda::Function
+      Properties:
+        FunctionName: !Ref PLambdaGetBookingSlotInPending
+        Handler: index.handler
+        Role: arn:aws:iam::861474768799:role/service-role/role-dynamodb
+        Code:
+          S3Bucket: !Ref BucketName
+          S3Key: getBookingSlotInPending.zip
+        Runtime: nodejs12.x
+        Timeout: 5
+        TracingConfig:
+          Mode: Active
+
+  LambdaGetBookingSlotInPendingPermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:invokeFunction'
+      FunctionName:
+        'Fn::GetAtt':
+          - LambdaGetBookingSlotInPending
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        'Fn::Join':
+          - ''
+          - - 'arn:aws:execute-api:'
+            - Ref: 'AWS::Region'
+            - ':'
+            - Ref: 'AWS::AccountId'
+            - ':'
+            - Ref: UnitedTutoringAPIs
+            - /*/GET/getbookingslotinpending
+
+  LambdaGetProfileImg:
+      Type: AWS::Lambda::Function
+      Properties:
+        FunctionName: !Ref PLambdaGetProfileImg
+        Handler: index.handler
+        Role: arn:aws:iam::861474768799:role/service-role/role-s3
+        Code:
+          S3Bucket: !Ref BucketName
+          S3Key: get-profile-img.zip
+        Runtime: nodejs12.x
+        Timeout: 5
+        TracingConfig:
+          Mode: Active
+
+  LambdaGetProfileImgPermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:invokeFunction'
+      FunctionName:
+        'Fn::GetAtt':
+          - LambdaGetProfileImg
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        'Fn::Join':
+          - ''
+          - - 'arn:aws:execute-api:'
+            - Ref: 'AWS::Region'
+            - ':'
+            - Ref: 'AWS::AccountId'
+            - ':'
+            - Ref: UnitedTutoringAPIs
+            - /*/GET/get-profile-img
+
+  LambdaSaveProfileImg:
+      Type: AWS::Lambda::Function
+      Properties:
+        FunctionName: !Ref PLambdaSaveProfileImg
+        Handler: index.handler
+        Role: arn:aws:iam::861474768799:role/service-role/role-s3
+        Code:
+          S3Bucket: !Ref BucketName
+          S3Key: save-profile-img.zip
+        Runtime: nodejs12.x
+        Timeout: 5
+        TracingConfig:
+          Mode: Active
+
+  LambdaSaveProfileImgPermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:invokeFunction'
+      FunctionName:
+        'Fn::GetAtt':
+          - LambdaSaveProfileImg
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        'Fn::Join':
+          - ''
+          - - 'arn:aws:execute-api:'
+            - Ref: 'AWS::Region'
+            - ':'
+            - Ref: 'AWS::AccountId'
+            - ':'
+            - Ref: UnitedTutoringAPIs
+            - /*/PUT/save-profile-img
+
+  LambdasSaveUserDetails:
+      Type: AWS::Lambda::Function
+      Properties:
+        FunctionName: !Ref PLambdasSaveUserDetails
+        Handler: index.handler
+        Role: arn:aws:iam::861474768799:role/service-role/role-dynamodb
+        Code:
+          S3Bucket: !Ref BucketName
+          S3Key: save-user-details.zip
+        Runtime: nodejs12.x
+        Timeout: 5
+        TracingConfig:
+          Mode: Active
+
+  LambdasSaveUserDetailsPermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:invokeFunction'
+      FunctionName:
+        'Fn::GetAtt':
+          - LambdasSaveUserDetails
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        'Fn::Join':
+          - ''
+          - - 'arn:aws:execute-api:'
+            - Ref: 'AWS::Region'
+            - ':'
+            - Ref: 'AWS::AccountId'
+            - ':'
+            - Ref: UnitedTutoringAPIs
+            - /*/POST/save-user-details
+
+  LambdaUpdateRequest:
+      Type: AWS::Lambda::Function
+      Properties:
+        FunctionName: !Ref PLambdaUpdateRequest
+        Handler: index.handler
+        Role: arn:aws:iam::861474768799:role/service-role/role-dynamodb
+        Code:
+          S3Bucket: !Ref BucketName
+          S3Key: updateRequest.zip
+        Runtime: nodejs12.x
+        Timeout: 5
+        TracingConfig:
+          Mode: Active
+
+  LambdaUpdateRequestPermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:invokeFunction'
+      FunctionName:
+        'Fn::GetAtt':
+          - LambdaUpdateRequest
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        'Fn::Join':
+          - ''
+          - - 'arn:aws:execute-api:'
+            - Ref: 'AWS::Region'
+            - ':'
+            - Ref: 'AWS::AccountId'
+            - ':'
+            - Ref: UnitedTutoringAPIs
+            - /*/POST/updaterequest
+
+  LambdaGetTutorBookings:
+      Type: AWS::Lambda::Function
+      Properties:
+        FunctionName: !Ref PLambdaGetTutorBookings
+        Handler: index.handler
+        Role: arn:aws:iam::861474768799:role/service-role/role-dynamodb
+        Code:
+          S3Bucket: !Ref BucketName
+          S3Key: get-tutor-bookings.zip
+        Runtime: nodejs12.x
+        Timeout: 5
+        TracingConfig:
+          Mode: Active
+
+  LambdaGetTutorBookingsPermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:invokeFunction'
+      FunctionName:
+        'Fn::GetAtt':
+          - LambdaGetTutorBookings
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        'Fn::Join':
+          - ''
+          - - 'arn:aws:execute-api:'
+            - Ref: 'AWS::Region'
+            - ':'
+            - Ref: 'AWS::AccountId'
+            - ':'
+            - Ref: UnitedTutoringAPIs
+            - /*/GET/get-tutor-bookings
+
+  LambdaSubscribeForEmailNotification:
+      Type: AWS::Lambda::Function
+      Properties:
+        FunctionName: !Ref PLambdaSubscribeForEmailNotification
+        Handler: index.handler
+        Role: arn:aws:iam::861474768799:role/service-role/SNStest-role-072qricj
+        Code:
+          S3Bucket: !Ref BucketName
+          S3Key: subscribeForEmailNotification.zip
+        Runtime: nodejs12.x
+        Timeout: 5
+        TracingConfig:
+          Mode: Active
+
+  LambdaSubscribeForEmailNotificationPermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:invokeFunction'
+      FunctionName:
+        'Fn::GetAtt':
+          - LambdaSubscribeForEmailNotification
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        'Fn::Join':
+          - ''
+          - - 'arn:aws:execute-api:'
+            - Ref: 'AWS::Region'
+            - ':'
+            - Ref: 'AWS::AccountId'
+            - ':'
+            - Ref: UnitedTutoringAPIs
+            - /*/GET/subscribe
+
+  LambdaGetUserDetails:
+      Type: AWS::Lambda::Function
+      Properties:
+        FunctionName: !Ref PLambdaGetUserDetails
+        Handler: index.handler
+        Role: arn:aws:iam::861474768799:role/service-role/role-dynamodb
+        Code:
+          S3Bucket: !Ref BucketName
+          S3Key: get-user-details.zip
+        Runtime: nodejs12.x
+        Timeout: 5
+        TracingConfig:
+          Mode: Active
+
+  LambdaGetUserDetailsPermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:invokeFunction'
+      FunctionName:
+        'Fn::GetAtt':
+          - LambdaGetUserDetails
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        'Fn::Join':
+          - ''
+          - - 'arn:aws:execute-api:'
+            - Ref: 'AWS::Region'
+            - ':'
+            - Ref: 'AWS::AccountId'
+            - ':'
+            - Ref: UnitedTutoringAPIs
+            - /*/POST/get-user-details
+
+  LambdaSaveBookingDetails:
+      Type: AWS::Lambda::Function
+      Properties:
+        FunctionName: !Ref PLambdaSaveBookingDetails
+        Handler: index.handler
+        Role: arn:aws:iam::861474768799:role/service-role/role-dynamodb
+        Code:
+          S3Bucket: !Ref BucketName
+          S3Key: savebookingdetails.zip
+        Runtime: nodejs12.x
+        Timeout: 5
+        TracingConfig:
+          Mode: Active
+  
+  LambdaSaveBookingDetailsPermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:invokeFunction'
+      FunctionName:
+        'Fn::GetAtt':
+          - LambdaSaveBookingDetails
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        'Fn::Join':
+          - ''
+          - - 'arn:aws:execute-api:'
+            - Ref: 'AWS::Region'
+            - ':'
+            - Ref: 'AWS::AccountId'
+            - ':'
+            - Ref: UnitedTutoringAPIs
+            - /*/POST/saveslot-booking
+
+  DynamoDBAvailability:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: "id"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "id"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 10
+          WriteCapacityUnits: 10
+        TableName: !Ref PDynamoDBAvailability
+  DynamoDBBookingDetails:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: "bookingId"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "bookingId"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 10
+          WriteCapacityUnits: 10
+        TableName: !Ref PDynamoDBBookingDetails
+  DynamoDBSlots:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: "id"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "id"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 10
+          WriteCapacityUnits: 10
+        TableName: !Ref PDynamoDBSlots
+  DynamoDBStudentDetails:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: "id"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "id"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 10
+          WriteCapacityUnits: 10
+        TableName: !Ref PDynamoDBStudentDetails
+  DynamoDBTutorDetails:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: "id"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "id"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 10
+          WriteCapacityUnits: 10
+        TableName: !Ref PDynamoDBTutorDetails
+
+  CronJobRule: 
+      Type: AWS::Events::Rule
+      Properties: 
+        Description: "CronJob"
+        ScheduleExpression: "rate(1 hour)"
+        Name: !Ref PCronJobRule
+        State: "ENABLED"
+        Targets: 
+          -
+            Arn: 
+                'Fn::GetAtt':
+                      - LambdaCronJob
+                      - Arn
+            Id: CronJobId
+
+  UnitedTutoringAPIs:
+    Type: AWS::ApiGateway::RestApi
+    
+    Properties:
+      Name: UnitedTutoring
+      Description: united tutoring
+       
+
+  Authorizer:
+        Type: AWS::ApiGateway::Authorizer
+        Properties:
+          IdentitySource: method.request.header.authorization
+          Name: CognitoAuthorizer
+          ProviderARNs: 
+            - {"Fn::Join": ["", ["arn:aws:cognito-idp:", {Ref: "AWS::Region"}, ":", {Ref: "AWS::AccountId"}, ":userpool/", Ref: UserPool]]}
+
+               
+          RestApiId: !Ref UnitedTutoringAPIs
+          Type: COGNITO_USER_POOLS
+
+  ResourceGetSlotDetails:
+        Type: AWS::ApiGateway::Resource
+        Properties:
+          RestApiId: !Ref UnitedTutoringAPIs
+          PathPart: get-availability
+          ParentId:
+            Fn::GetAtt:
+              - UnitedTutoringAPIs
+              - RootResourceId
+
+  GetSlotDetailsOption:
+      Type: AWS::ApiGateway::Method
+      Properties:
+        AuthorizationType: NONE
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        ResourceId:
+          Ref: ResourceGetSlotDetails
+        HttpMethod: OPTIONS
+        Integration:
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'OPTIONS'"
+              "method.response.header.Access-Control-Allow-Origin": "'*'"
+            ResponseTemplates:
+              application/json: ''
+          RequestTemplates:
+            application/json: '{"statusCode": 200}'
+          Type: MOCK
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false
+
+  GetSlotDetailsPost:
+      Type: 'AWS::ApiGateway::Method'
+      Properties:
+        ApiKeyRequired: false
+        AuthorizationType: COGNITO_USER_POOLS
+        AuthorizerId: !Ref Authorizer
+        HttpMethod: POST
+        ResourceId:
+          Ref: ResourceGetSlotDetails
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        
+        Integration:
+          IntegrationHttpMethod: POST
+          Type: AWS_PROXY
+          Uri:
+            'Fn::Join':
+              - ''
+              - - 'arn:aws:apigateway:'
+                - Ref: 'AWS::Region'
+                - ':lambda:path/2015-03-31/functions/'
+                - 'Fn::GetAtt':
+                    - LambdaGetSlotDetails
+                    - Arn
+                - /invocations
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'POST'"
+              "method.response.header.Access-Control-Allow-Origin" : "'*'"
+          
+            ResponseTemplates:
+              application/json: ''
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false            
+
+  ResourceGetProfileImage:
+        Type: AWS::ApiGateway::Resource
+        Properties:
+          RestApiId: !Ref UnitedTutoringAPIs
+          PathPart: get-profile-img
+          ParentId:
+            Fn::GetAtt:
+              - UnitedTutoringAPIs
+              - RootResourceId
+
+  GetProfileImageOptions:
+      Type: AWS::ApiGateway::Method
+      Properties:
+        AuthorizationType: NONE
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        ResourceId:
+          Ref: ResourceGetProfileImage
+        HttpMethod: OPTIONS
+        Integration:
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'OPTIONS'"
+              "method.response.header.Access-Control-Allow-Origin": "'*'"
+            ResponseTemplates:
+              application/json: ''
+          RequestTemplates:
+            application/json: '{"statusCode": 200}'
+          Type: MOCK
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false
+  GetProfileImageGet:
+      Type: 'AWS::ApiGateway::Method'
+      Properties:
+        ApiKeyRequired: false
+        AuthorizationType: COGNITO_USER_POOLS
+        AuthorizerId: !Ref Authorizer
+        HttpMethod: GET
+        ResourceId:
+          Ref: ResourceGetProfileImage
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        
+        Integration:
+          IntegrationHttpMethod: GET
+          Type: AWS_PROXY
+          Uri:
+            'Fn::Join':
+              - ''
+              - - 'arn:aws:apigateway:'
+                - Ref: 'AWS::Region'
+                - ':lambda:path/2015-03-31/functions/'
+                - 'Fn::GetAtt':
+                    - LambdaGetProfileImg
+                    - Arn
+                - /invocations
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'GET'"
+              "method.response.header.Access-Control-Allow-Origin" : "'*'"
+          
+            ResponseTemplates:
+              application/json: ''
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false            
+
+  ResourceTutorBooking:
+        Type: AWS::ApiGateway::Resource
+        Properties:
+          RestApiId: !Ref UnitedTutoringAPIs
+          PathPart: get-tutor-bookings
+          ParentId:
+            Fn::GetAtt:
+              - UnitedTutoringAPIs
+              - RootResourceId
+  TutorBookingOption:
+      Type: AWS::ApiGateway::Method
+      Properties:
+        AuthorizationType: NONE
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        ResourceId:
+          Ref: ResourceTutorBooking
+        HttpMethod: OPTIONS
+        Integration:
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'OPTIONS'"
+              "method.response.header.Access-Control-Allow-Origin": "'*'"
+            ResponseTemplates:
+              application/json: ''
+          RequestTemplates:
+            application/json: '{"statusCode": 200}'
+          Type: MOCK
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false
+  TutorBookingGet:
+      Type: 'AWS::ApiGateway::Method'
+      Properties:
+        ApiKeyRequired: false
+        AuthorizationType: COGNITO_USER_POOLS
+        AuthorizerId: !Ref Authorizer
+        HttpMethod: GET
+        ResourceId:
+          Ref: ResourceTutorBooking
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        
+        Integration:
+          IntegrationHttpMethod: GET
+          Type: AWS_PROXY
+          Uri:
+            'Fn::Join':
+              - ''
+              - - 'arn:aws:apigateway:'
+                - Ref: 'AWS::Region'
+                - ':lambda:path/2015-03-31/functions/'
+                - 'Fn::GetAtt':
+                    - LambdaGetTutorBookings
+                    - Arn
+                - /invocations
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'GET'"
+              "method.response.header.Access-Control-Allow-Origin" : "'*'"
+          
+            ResponseTemplates:
+              application/json: ''
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false            
+
+  ResourceUserDetails:
+        Type: AWS::ApiGateway::Resource
+        Properties:
+          RestApiId: !Ref UnitedTutoringAPIs
+          PathPart: get-user-details
+          ParentId:
+            Fn::GetAtt:
+              - UnitedTutoringAPIs
+              - RootResourceId
+  UserDetailsOption:
+      Type: AWS::ApiGateway::Method
+      Properties:
+        AuthorizationType: NONE
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        ResourceId:
+          Ref: ResourceUserDetails
+        HttpMethod: OPTIONS
+        Integration:
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'OPTIONS'"
+              "method.response.header.Access-Control-Allow-Origin": "'*'"
+            ResponseTemplates:
+              application/json: ''
+          RequestTemplates:
+            application/json: '{"statusCode": 200}'
+          Type: MOCK
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false
+  UserDetailsPost:
+      Type: 'AWS::ApiGateway::Method'
+      Properties:
+        ApiKeyRequired: false
+        AuthorizationType: COGNITO_USER_POOLS
+        AuthorizerId: !Ref Authorizer
+        HttpMethod: POST
+        ResourceId:
+          Ref: ResourceUserDetails
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        
+        Integration:
+          IntegrationHttpMethod: POST
+          Type: AWS_PROXY
+          Uri:
+            'Fn::Join':
+              - ''
+              - - 'arn:aws:apigateway:'
+                - Ref: 'AWS::Region'
+                - ':lambda:path/2015-03-31/functions/'
+                - 'Fn::GetAtt':
+                    - LambdaGetUserDetails
+                    - Arn
+                - /invocations
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'GET'"
+              "method.response.header.Access-Control-Allow-Origin" : "'*'"
+          
+            ResponseTemplates:
+              application/json: ''
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false            
+
+  ResourceBookingSlotInPending:
+        Type: AWS::ApiGateway::Resource
+        Properties:
+          RestApiId: !Ref UnitedTutoringAPIs
+          PathPart: getbookingslotinpending
+          ParentId:
+            Fn::GetAtt:
+              - UnitedTutoringAPIs
+              - RootResourceId
+  BookingSlotInPendingOption:
+      Type: AWS::ApiGateway::Method
+      Properties:
+        AuthorizationType: NONE
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        ResourceId:
+          Ref: ResourceBookingSlotInPending
+        HttpMethod: OPTIONS
+        Integration:
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'OPTIONS'"
+              "method.response.header.Access-Control-Allow-Origin": "'*'"
+            ResponseTemplates:
+              application/json: ''
+          RequestTemplates:
+            application/json: '{"statusCode": 200}'
+          Type: MOCK
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false
+  BookingSlotInPendingPost:
+      Type: 'AWS::ApiGateway::Method'
+      Properties:
+        ApiKeyRequired: false
+        AuthorizationType: COGNITO_USER_POOLS
+        AuthorizerId: !Ref Authorizer
+        HttpMethod: POST
+        ResourceId:
+          Ref: ResourceBookingSlotInPending
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        
+        Integration:
+          IntegrationHttpMethod: POST
+          Type: AWS_PROXY
+          Uri:
+            'Fn::Join':
+              - ''
+              - - 'arn:aws:apigateway:'
+                - Ref: 'AWS::Region'
+                - ':lambda:path/2015-03-31/functions/'
+                - 'Fn::GetAtt':
+                    - LambdaGetBookingSlotInPending
+                    - Arn
+                - /invocations
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'GET'"
+              "method.response.header.Access-Control-Allow-Origin" : "'*'"
+          
+            ResponseTemplates:
+              application/json: ''
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false            
+
+  ResourceSaveAvailability:
+        Type: AWS::ApiGateway::Resource
+        Properties:
+          RestApiId: !Ref UnitedTutoringAPIs
+          PathPart: save-availability
+          ParentId:
+            Fn::GetAtt:
+              - UnitedTutoringAPIs
+              - RootResourceId
+  SaveAvailabilityOption:
+      Type: AWS::ApiGateway::Method
+      Properties:
+        AuthorizationType: NONE
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        ResourceId:
+          Ref: ResourceSaveAvailability
+        HttpMethod: OPTIONS
+        Integration:
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'OPTIONS'"
+              "method.response.header.Access-Control-Allow-Origin": "'*'"
+            ResponseTemplates:
+              application/json: ''
+          RequestTemplates:
+            application/json: '{"statusCode": 200}'
+          Type: MOCK
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false
+  SaveAvailabilityPost:
+      Type: 'AWS::ApiGateway::Method'
+      Properties:
+        ApiKeyRequired: false
+        AuthorizationType: COGNITO_USER_POOLS
+        AuthorizerId: !Ref Authorizer
+        HttpMethod: POST
+        ResourceId:
+          Ref: ResourceSaveAvailability
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        
+        Integration:
+          IntegrationHttpMethod: POST
+          Type: AWS_PROXY
+          Uri:
+            'Fn::Join':
+              - ''
+              - - 'arn:aws:apigateway:'
+                - Ref: 'AWS::Region'
+                - ':lambda:path/2015-03-31/functions/'
+                - 'Fn::GetAtt':
+                    - LambdaSaveAvailability
+                    - Arn
+                - /invocations
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'GET'"
+              "method.response.header.Access-Control-Allow-Origin" : "'*'"
+          
+            ResponseTemplates:
+              application/json: ''
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false            
+
+  ResourceSaveProfileImage:
+        Type: AWS::ApiGateway::Resource
+        Properties:
+          RestApiId: !Ref UnitedTutoringAPIs
+          PathPart: save-profile-img
+          ParentId:
+            Fn::GetAtt:
+              - UnitedTutoringAPIs
+              - RootResourceId
+  SaveProfileImageOption:
+      Type: AWS::ApiGateway::Method
+      Properties:
+        AuthorizationType: NONE
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        ResourceId:
+          Ref: ResourceSaveProfileImage
+        HttpMethod: OPTIONS
+        Integration:
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'OPTIONS'"
+              "method.response.header.Access-Control-Allow-Origin": "'*'"
+            ResponseTemplates:
+              application/json: ''
+          RequestTemplates:
+            application/json: '{"statusCode": 200}'
+          Type: MOCK
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false
+  SaveProfileImagePut:
+      Type: 'AWS::ApiGateway::Method'
+      Properties:
+        ApiKeyRequired: false
+        AuthorizationType: COGNITO_USER_POOLS
+        AuthorizerId: !Ref Authorizer
+        HttpMethod: PUT
+        ResourceId:
+          Ref: ResourceSaveProfileImage
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        
+        Integration:
+          IntegrationHttpMethod: PUT
+          Type: AWS_PROXY
+          Uri:
+            'Fn::Join':
+              - ''
+              - - 'arn:aws:apigateway:'
+                - Ref: 'AWS::Region'
+                - ':lambda:path/2015-03-31/functions/'
+                - 'Fn::GetAtt':
+                    - LambdaSaveProfileImg
+                    - Arn
+                - /invocations
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'PUT'"
+              "method.response.header.Access-Control-Allow-Origin" : "'*'"
+          
+            ResponseTemplates:
+              application/json: ''
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false            
+
+  ResourecSaveUserDetails:
+        Type: AWS::ApiGateway::Resource
+        Properties:
+          RestApiId: !Ref UnitedTutoringAPIs
+          PathPart: save-user-details
+          ParentId:
+            Fn::GetAtt:
+              - UnitedTutoringAPIs
+              - RootResourceId
+  SaveUserDetailsOption:
+      Type: AWS::ApiGateway::Method
+      Properties:
+        AuthorizationType: NONE
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        ResourceId:
+          Ref: ResourecSaveUserDetails
+        HttpMethod: OPTIONS
+        Integration:
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'OPTIONS'"
+              "method.response.header.Access-Control-Allow-Origin": "'*'"
+            ResponseTemplates:
+              application/json: ''
+          RequestTemplates:
+            application/json: '{"statusCode": 200}'
+          Type: MOCK
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false
+  SaveUserDetailsPost:
+      Type: 'AWS::ApiGateway::Method'
+      Properties:
+        ApiKeyRequired: false
+        AuthorizationType: COGNITO_USER_POOLS
+        AuthorizerId: !Ref Authorizer
+        HttpMethod: POST
+        ResourceId:
+          Ref: ResourecSaveUserDetails
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        
+        Integration:
+          IntegrationHttpMethod: POST
+          Type: AWS_PROXY
+          Uri:
+            'Fn::Join':
+              - ''
+              - - 'arn:aws:apigateway:'
+                - Ref: 'AWS::Region'
+                - ':lambda:path/2015-03-31/functions/'
+                - 'Fn::GetAtt':
+                    - LambdasSaveUserDetails
+                    - Arn
+                - /invocations
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'POST'"
+              "method.response.header.Access-Control-Allow-Origin" : "'*'"
+          
+            ResponseTemplates:
+              application/json: ''
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false            
+
+  ResourceSaveSlotBooking:
+        Type: AWS::ApiGateway::Resource
+        Properties:
+          RestApiId: !Ref UnitedTutoringAPIs
+          PathPart: saveslot-booking
+          ParentId:
+            Fn::GetAtt:
+              - UnitedTutoringAPIs
+              - RootResourceId
+  SaveSlotBookingOption:
+      Type: AWS::ApiGateway::Method
+      Properties:
+        AuthorizationType: NONE
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        ResourceId:
+          Ref: ResourceSaveSlotBooking
+        HttpMethod: OPTIONS
+        Integration:
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'OPTIONS'"
+              "method.response.header.Access-Control-Allow-Origin": "'*'"
+            ResponseTemplates:
+              application/json: ''
+          RequestTemplates:
+            application/json: '{"statusCode": 200}'
+          Type: MOCK
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false
+  SaveSlotBookingPost:
+      Type: 'AWS::ApiGateway::Method'
+      Properties:
+        ApiKeyRequired: false
+        AuthorizationType: COGNITO_USER_POOLS
+        AuthorizerId: !Ref Authorizer
+        HttpMethod: POST
+        ResourceId:
+          Ref: ResourceSaveSlotBooking
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        
+        Integration:
+          IntegrationHttpMethod: POST
+          Type: AWS_PROXY
+          Uri:
+            'Fn::Join':
+              - ''
+              - - 'arn:aws:apigateway:'
+                - Ref: 'AWS::Region'
+                - ':lambda:path/2015-03-31/functions/'
+                - 'Fn::GetAtt':
+                    - LambdaSaveBookingDetails
+                    - Arn
+                - /invocations
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'POST'"
+              "method.response.header.Access-Control-Allow-Origin" : "'*'"
+          
+            ResponseTemplates:
+              application/json: ''
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false            
+
+  ResourceSubscribe:
+        Type: AWS::ApiGateway::Resource
+        Properties:
+          RestApiId: !Ref UnitedTutoringAPIs
+          PathPart: subscribe
+          ParentId:
+            Fn::GetAtt:
+              - UnitedTutoringAPIs
+              - RootResourceId
+  SubscribeOption:
+      Type: AWS::ApiGateway::Method
+      Properties:
+        AuthorizationType: NONE
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        ResourceId:
+          Ref: ResourceSubscribe
+        HttpMethod: OPTIONS
+        Integration:
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'OPTIONS'"
+              "method.response.header.Access-Control-Allow-Origin": "'*'"
+            ResponseTemplates:
+              application/json: ''
+          RequestTemplates:
+            application/json: '{"statusCode": 200}'
+          Type: MOCK
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false
+  SubscribeGET:
+      Type: 'AWS::ApiGateway::Method'
+      Properties:
+        ApiKeyRequired: false
+        AuthorizationType: NONE
+        HttpMethod: GET
+        ResourceId:
+          Ref: ResourceSubscribe
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        
+        Integration:
+          IntegrationHttpMethod: GET
+          Type: AWS_PROXY
+          Uri:
+            'Fn::Join':
+              - ''
+              - - 'arn:aws:apigateway:'
+                - Ref: 'AWS::Region'
+                - ':lambda:path/2015-03-31/functions/'
+                - 'Fn::GetAtt':
+                    - LambdaSubscribeForEmailNotification
+                    - Arn
+                - /invocations
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'GET'"
+              "method.response.header.Access-Control-Allow-Origin" : "'*'"
+          
+            ResponseTemplates:
+              application/json: ''
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false            
+
+  ResourceUpdateRequest:
+        Type: AWS::ApiGateway::Resource
+        Properties:
+          RestApiId: !Ref UnitedTutoringAPIs
+          PathPart: updaterequest 
+          ParentId:
+            Fn::GetAtt:
+              - UnitedTutoringAPIs
+              - RootResourceId
+  UpdateRequestOption:
+      Type: AWS::ApiGateway::Method
+      Properties:
+        AuthorizationType: NONE
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        ResourceId:
+          Ref: ResourceUpdateRequest
+        HttpMethod: OPTIONS
+        Integration:
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'OPTIONS'"
+              "method.response.header.Access-Control-Allow-Origin": "'*'"
+            ResponseTemplates:
+              application/json: ''
+          RequestTemplates:
+            application/json: '{"statusCode": 200}'
+          Type: MOCK
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false
+  UpdateRequestPost:
+      Type: 'AWS::ApiGateway::Method'
+      Properties:
+        ApiKeyRequired: false
+        AuthorizationType: COGNITO_USER_POOLS
+        AuthorizerId: !Ref Authorizer
+        HttpMethod: POST
+        ResourceId:
+          Ref: ResourceUpdateRequest
+        RestApiId:
+          Ref: UnitedTutoringAPIs
+        
+        Integration:
+          IntegrationHttpMethod: POST
+          Type: AWS_PROXY
+          Uri:
+            'Fn::Join':
+              - ''
+              - - 'arn:aws:apigateway:'
+                - Ref: 'AWS::Region'
+                - ':lambda:path/2015-03-31/functions/'
+                - 'Fn::GetAtt':
+                    - LambdaUpdateRequest
+                    - Arn
+                - /invocations
+          IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              "method.response.header.Access-Control-Allow-Methods": "'POST'"
+              "method.response.header.Access-Control-Allow-Origin" : "'*'"
+          
+            ResponseTemplates:
+              application/json: ''
+        MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: 'Empty'
+          ResponseParameters:
+              "method.response.header.Access-Control-Allow-Headers": false
+              "method.response.header.Access-Control-Allow-Methods": false
+              "method.response.header.Access-Control-Allow-Origin": false
+
+
+  LambdaCronJobPermission:
+      Type: AWS::Lambda::Permission
+      Properties: 
+        FunctionName:
+          'Fn::GetAtt':
+            - LambdaCronJob
+            - Arn
+        Action: "lambda:InvokeFunction"
+        Principal: "events.amazonaws.com"
+        SourceArn: 
+          Fn::GetAtt:
+              - CronJobRule
+              - "Arn"
+
+Outputs:
+  CognitoUserPoolID:
+    Value: !Ref UserPool
+    Description: The UserPool ID
+  CognitoAppClientID:
+    Value: !Ref UserPoolClient
+    Description: The app client
+  HostedUIURL:
+    Value: !Sub https://${CognitoDomain}.auth.us-west-2.amazoncognito.com/login?client_id=${UserPoolClient}&response_type=code&scope=email+openid+phone+profile&redirect_uri=http://localhost:3000
+    Description: The hosted UI URL
