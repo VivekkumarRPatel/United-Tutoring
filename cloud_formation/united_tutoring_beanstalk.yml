@@ -1,1 +1,84 @@
+############################################################################################################
+# CSCI 5409 Cloud Computing
+# Group 23 - 3 Musketeers                                                                                  
+# Resource creation:                                                                                       
+# - ElasticBeanstalk                                                                                                                                                                                             
+# Reference taken from-                                                                                     
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cognito-userpool.html 
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-beanstalk-environment.html
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/quickref-elasticbeanstalk.html                                                                              
+############################################################################################################
+
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  AppName:
+    Type: String
+    Default: production
+  EC2InstanceType: 
+    Type: String
+    Default: t2.medium
+Resources:
+  Application:
+    Type: "AWS::ElasticBeanstalk::Application"
+    Properties:
+      ApplicationName: !Ref AppName
+      Description: United Tutoring ElasticBeanstalk Application
+      
+  ApplicationVersion:
+    Type: "AWS::ElasticBeanstalk::ApplicationVersion"
+    Properties:
+      ApplicationName: !Ref Application
+      Description: String
+      SourceBundle:
+        S3Bucket: unitedtutoring
+        S3Key: unitedtutoring.zip
+
+  ElasticBeanstalkEnvironment:
+    Type: "AWS::ElasticBeanstalk::Environment"
+    Properties:
+      EnvironmentName: !Join ["-", [!Ref AppName, "unitedtutoring"]]
+      ApplicationName: !Ref Application
+      SolutionStackName: "64bit Amazon Linux 2 v3.4.17 running Docker"
+      Tier:
+        Name: WebServer
+        Type: Standard
+        Version: "1.0"
+      VersionLabel: !Ref ApplicationVersion
+      OptionSettings:
+        - Namespace: aws:autoscaling:asg
+          OptionName: MinSize
+          Value: '1'
+        - Namespace: aws:autoscaling:asg
+          OptionName: MaxSize
+          Value: '2'   
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: InstanceType
+          Value: t2.medium
+        - Namespace: aws:elasticbeanstalk:environment
+          OptionName: EnvironmentType
+          Value: LoadBalanced
+        - Namespace: aws:autoscaling:asg
+          OptionName: MinSize
+          Value: 1
+        - Namespace: aws:autoscaling:asg
+          OptionName: MaxSize
+          Value: 4
+        - Namespace: aws:autoscaling:trigger
+          OptionName: MeasureName
+          Value: CPUUtilization
+        - Namespace: aws:autoscaling:trigger
+          OptionName: Unit
+          Value: Percent
+        - Namespace: aws:autoscaling:trigger
+          OptionName: UpperThreshold
+          Value: '70'
+        - Namespace: aws:autoscaling:trigger
+          OptionName: LowerThreshold
+          Value: '30'          
+      
+Outputs:
+  PublicAlbDnsName:
+    Description: ElasticBeanstalk APP URL
+    Value: !GetAtt 'ElasticBeanstalkEnvironment.EndpointURL'
+
 
