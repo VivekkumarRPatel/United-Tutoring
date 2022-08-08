@@ -1,4 +1,4 @@
 {
     "UserPoolId": "Enter cognito pool id here",
-    "ClientId": "Enter cognito client id here"
+    "ClientId": "Enter client id here"
 }
