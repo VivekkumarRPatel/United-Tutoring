@@ -8,7 +8,7 @@ having difficulty understanding a concept or want to learn something new. Beside
 overall understanding of a subject or topic, this also assists them in trying out and learning
 something new. A user can be both a tutor as well as a student.
 
-Tutors must create an account and list their skills and experience in their expertise. Registered
+* Tutors must create an account and list their skills and experience in their expertise. Registered
 students can search by skill and obtain a list of tutors who specialize in that subject. Students can
 then go to each tutor's profile and arrange an appointment with whichever tutor appears to be
 pertinent to their question. Moreover, tutors will be able to enter their available dates and time
