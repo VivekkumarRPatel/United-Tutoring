@@ -101,12 +101,18 @@ This project is deployed on Heroku server. Follow below steps for deployment:
 
 ## Built With
 
-1. [express](https://www.npmjs.com/package/express)
-2. [cors](https://www.npmjs.com/package/cors)
-3. [body-parser](https://www.npmjs.com/package/body-parser)
-4. [mongoose](https://www.npmjs.com/package/mongoose)
-5. [moment](https://www.npmjs.com/package/moment)
+United Tutoring has been build with following technology stack.
+
+* [![React][React.js]][React-url]
+* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
+
+
 
 ## Acknowledgments
 
 * Nodejs Documentation - [node.js](https://nodejs.org/en/docs/)
+
+
+<!-- LINKS & IMAGES -->
+[React-url]: https://reactjs.org/
+[Bootstrap-url]: https://getbootstrap.com
