@@ -10,6 +10,29 @@
 - [Sponsors](#sponsors-)
 - [Acknowledgments](#acknowledgments)
 
+## Built With
+
+United Tutoring has been build with following technology stack.
+
+* [![HTML][HTML.com]][HTML-url]
+* [![CSS][CSS.com]][CSS-url]
+* [![Java script][javascript.com]][javascript-url]
+* [![Node][Node.com]][Node-url]
+* [![React][React.js]][React-url]
+* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
+
+##  AWS Cloud Services Used
+
+1. [AWS Cognito](https://aws.amazon.com/cognito/)
+2. [AWS Lambda](https://aws.amazon.com/lambda/)
+3. [AWS S3](https://aws.amazon.com/s3/)
+4. [AWS DynamoDB](https://aws.amazon.com/dynamodb/)
+5. [AWS EventBridge](https://aws.amazon.com/eventbridge/)
+6. [AWS API Gateway](https://aws.amazon.com/api-gateway/)
+7. [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/)
+8. [AWS Simple Notification Service](https://docs.aws.amazon.com/elastic-beanstalk/)
+9. [AWS Cloud Formation]()
+
 
 
 
@@ -99,19 +122,6 @@ This project is deployed on Heroku server. Follow below steps for deployment:
 8. Heroku will build the code after completion of push operation.
 9. Click on 'Open App' from the heroku website window to view the deployed app.
 
-## Built With
-
-United Tutoring has been build with following technology stack.
-
-* [![HTML][HTML.com]][Node-url]
-* [![CSS][CSS.com]][Node-url]
-* [![Java script][javascript.com]][Node-url]
-* [![Node][Node.com]][Node-url]
-* [![React][React.js]][React-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-
-
-
 ## Acknowledgments
 
 * Nodejs Documentation - [node.js](https://nodejs.org/en/docs/)
@@ -130,3 +140,7 @@ United Tutoring has been build with following technology stack.
 [javascript-url]:https://www.javascript.com/
 [Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
 [Bootstrap-url]: https://getbootstrap.com
+[AWS.com]: https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white
+[AWS-url]: https://aws.amazon.com/
+
+<!-- LINKS & IMAGES For services used -->
