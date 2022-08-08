@@ -103,6 +103,7 @@ This project is deployed on Heroku server. Follow below steps for deployment:
 
 United Tutoring has been build with following technology stack.
 
+* [![Node][Node.com]][Node-url]
 * [![React][React.js]][React-url]
 * [![Bootstrap][Bootstrap.com]][Bootstrap-url]
 
