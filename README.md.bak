@@ -117,7 +117,13 @@ United Tutoring has been build with following technology stack.
 <!-- LINKS & IMAGES -->
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [React-url]: https://reactjs.org/
-[Node.com]: https://nodejs.org/static/images/logos/nodejs-new-pantone-black.svg
+[Node.com]: https://badges.aleen42.com/src/node.svg
 [Node-url]: https://nodejs.org/en/
+[CSS.com]:  https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white
+[CSS-url]:  https://www.w3schools.com/css/
+[HTML.com]: https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white
+[HTML-url]: https://www.w3schools.com/html/
+[javascript.com]:	https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E
+[javascript-url]:https://www.javascript.com/
 [Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
 [Bootstrap-url]: https://getbootstrap.com
