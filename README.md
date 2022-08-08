@@ -1,6 +1,21 @@
-# Project - United Tutoring
+## United Tutoring
 
-* Project - United Tutoring : One to One Tutor and student session management
+- [Introduction](#introduction)
+- [Authors](#authors)
+- [Features](#features)
+- [Feedback](#feedback)
+- [Contributors](#contributors)
+- [Build Process](#build-process)
+- [Backers](#backers-)
+- [Sponsors](#sponsors-)
+- [Acknowledgments](#acknowledgments)
+
+
+
+
+## Introduction 
+
+* One to One Tutor and student session management
 United Tutoring is an online platform for one-to-one tutoring. This online platform caters to two
 types of users: tutors who impart knowledge and students who seek knowledge. Students can use
 this platform to interact with registered tutors and get all their questions answered when they are
@@ -32,13 +47,14 @@ availabilities and all requests, including accepted, rejected, and pending reque
 * [Manali Shah](lokansh.gupta@dal.ca) (B00890746) - *(Developer)*
 
 
-## Features Developed
-* User Management - Vasu Gamdha
-* Scheduling Pickups - Prashit Prakashbhai Patel
-* Tracking Pickups - Vivekkumar Patel
-* FAQs - Aabhaas Jain
-* Contact Us - Lokansh Gupta
-* Analytics - Jaimi Maheshbhai Sheta
+## Features
+* User Profile Management
+* Tutor's Availability Management
+* Booking Sessions
+* Accepting or Rejecting Requests
+* Email Notification
+* Real Time Status Management
+* Searching based on S`kills
 
 ## Getting Started
 
