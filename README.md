@@ -71,7 +71,7 @@ availabilities and all requests, including accepted, rejected, and pending reque
 
 * [Vivekkumar Patel]  - *(Developer)*
 * [Keyur Vaghani](https://github.com/KeyurVaghani) - *(Developer)*
-* [Manali Shah] - *(Developer)*
+* [Manali Shah] (https://github.com/Manalishah1) - *(Developer)*
 
 
 ## Features
