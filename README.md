@@ -21,6 +21,7 @@ United Tutoring has been build with following technology stack.
 * [![React][React.js]][React-url]
 * [![Express][Express.com]][Express-url]
 * [![Jwt][Jwt.com]][Jwt-url]
+* [![AWS][AWS.com]][AWS-url]
 * [![Bootstrap][Bootstrap.com]][Bootstrap-url]
 
 ##  AWS Cloud Services Used
