@@ -3,10 +3,10 @@
 - [Introduction](#introduction)
 - [Features](#features)
 - [Authors](#authors)
-- [Built With](#built)
-- [AWS Services](#aws)
-- [Other API](#other)
-- [Getting Started](#getting)
+- [Built With](#built-with)
+- [AWS Services](#aws-cloud-services-used)
+- [Other API](#other-api)
+- [Getting Started](#getting-started)
 - [Acknowledgments](#acknowledgments)
 
 ## Introduction 
