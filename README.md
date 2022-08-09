@@ -4,9 +4,9 @@
 - [Features](#features)
 - [Authors](#authors)
 - [Built With](#built)
-- [AWS Services](#aWS Cloud Services Used)
-- [Other API](#other API Used)
-- [Getting Started](#getting Started)
+- [AWS Services](#aws cloud)
+- [Other API](#other api)
+- [Getting Started](#getting started)
 - [Acknowledgments](#acknowledgments)
 
 ## Introduction 
