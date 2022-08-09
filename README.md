@@ -128,7 +128,21 @@ This project is deployed on Heroku server. Follow below steps for deployment:
 
 ## Acknowledgments
 
-* Nodejs Documentation - [node.js](https://nodejs.org/en/docs/)
+* [node.js](https://nodejs.org/en/docs/)
+* [Amazon Cognito Identity SDK](https://www.npmjs.com/package/amazon-cognito-identity-js-node)
+* [AWS SDK for Javascript](https://www.npmjs.com/package/aws-sdk)
+* [AWS Cloud Formation](https://docs.aws.amazon.com/cloudformation/index.html)
+* [React Formik](https://formik.org/)
+
+https://www.npmjs.com/package/amazon-cognito-identity-js-node
+* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
+* [Malven's Flexbox Cheatsheet](https://flexbox.malven.co/)
+* [Malven's Grid Cheatsheet](https://grid.malven.co/)
+* [Img Shields](https://shields.io)
+* [GitHub Pages](https://pages.github.com)
+* [Font Awesome](https://fontawesome.com)
+* [React Icons](https://react-icons.github.io/react-icons/search)
+
 
 
 <!-- LINKS & IMAGES -->
