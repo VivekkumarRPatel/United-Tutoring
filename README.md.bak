@@ -19,6 +19,8 @@ United Tutoring has been build with following technology stack.
 * [![Java script][javascript.com]][javascript-url]
 * [![Node][Node.com]][Node-url]
 * [![React][React.js]][React-url]
+* [![Express][Express.com]][Express-url]
+* [![Jwt][Jwt.com]][Jwt-url]
 * [![Bootstrap][Bootstrap.com]][Bootstrap-url]
 
 ##  AWS Cloud Services Used
@@ -31,10 +33,12 @@ United Tutoring has been build with following technology stack.
 6. [AWS API Gateway](https://aws.amazon.com/api-gateway/)
 7. [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/)
 8. [AWS Simple Notification Service](https://docs.aws.amazon.com/elastic-beanstalk/)
-9. [AWS Cloud Formation]()
+9. [AWS Cloud Formation](https://aws.amazon.com/cloudformation/)
 
+##  Other API Used
 
-
+1. [Zoom API](https://devforum.zoom.us/t/help-understanding-how-to-create-meeting-using-backend/8496)
+2. [Moment js](https://momentjs.com/)
 
 ## Introduction 
 
@@ -65,9 +69,9 @@ availabilities and all requests, including accepted, rejected, and pending reque
 
 ## Authors
 
-* [Vivekkumar Patel](vv662564@dal.ca) (B00874162) - *(Developer)*
-* [Keyur Vaghani](ky360972@dal.ca) (B00901000) - *(Developer)*
-* [Manali Shah](lokansh.gupta@dal.ca) (B00890746) - *(Developer)*
+* [Vivekkumar Patel]  - *(Developer)*
+* [Keyur Vaghani](https://github.com/KeyurVaghani) - *(Developer)*
+* [Manali Shah](lokansh.gupta@dal.ca) - *(Developer)*
 
 
 ## Features
@@ -142,5 +146,10 @@ This project is deployed on Heroku server. Follow below steps for deployment:
 [Bootstrap-url]: https://getbootstrap.com
 [AWS.com]: https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white
 [AWS-url]: https://aws.amazon.com/
+[Express.com]:https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB
+[Express-url]: https://expressjs.com/
+[Jwt.com]:https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens
+[Jwt-url]: https://jwt.io/
+
 
 <!-- LINKS & IMAGES For services used -->
