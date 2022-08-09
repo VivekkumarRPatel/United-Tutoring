@@ -1,45 +1,14 @@
 ## United Tutoring
 
 - [Introduction](#introduction)
-- [Authors](#authors)
 - [Features](#features)
-- [Feedback](#feedback)
-- [Contributors](#contributors)
-- [Build Process](#build-process)
-- [Backers](#backers-)
+- [Authors](#authors)
+- [Built With](#built With)
+- [AWS Services](#AWS Cloud Services Used)
+- [Other API](#Other API Used)
+- [Getting Started](#Getting Started)
 - [Sponsors](#sponsors-)
 - [Acknowledgments](#acknowledgments)
-
-## Built With
-
-United Tutoring has been build with following technology stack.
-
-* [![HTML][HTML.com]][HTML-url]
-* [![CSS][CSS.com]][CSS-url]
-* [![Java script][javascript.com]][javascript-url]
-* [![Node][Node.com]][Node-url]
-* [![React][React.js]][React-url]
-* [![Express][Express.com]][Express-url]
-* [![Jwt][Jwt.com]][Jwt-url]
-* [![Jwt][Jwt.com]][Jwt-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-
-##  AWS Cloud Services Used
-
-1. [AWS Cognito](https://aws.amazon.com/cognito/)
-2. [AWS Lambda](https://aws.amazon.com/lambda/)
-3. [AWS S3](https://aws.amazon.com/s3/)
-4. [AWS DynamoDB](https://aws.amazon.com/dynamodb/)
-5. [AWS EventBridge](https://aws.amazon.com/eventbridge/)
-6. [AWS API Gateway](https://aws.amazon.com/api-gateway/)
-7. [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/)
-8. [AWS Simple Notification Service](https://docs.aws.amazon.com/elastic-beanstalk/)
-9. [AWS Cloud Formation](https://aws.amazon.com/cloudformation/)
-
-##  Other API Used
-
-1. [Zoom API](https://devforum.zoom.us/t/help-understanding-how-to-create-meeting-using-backend/8496)
-2. [Moment js](https://momentjs.com/)
 
 ## Introduction 
 
@@ -68,13 +37,6 @@ availabilities and all requests, including accepted, rejected, and pending reque
 * *Demo URL*: <https://www.youtube.com/watch?v=lJaXV4cw8fo/>
 * *Git URL*: <https://git.cs.dal.ca/courses/2022-summer/csci4145-5409/group-23/-/tree/main/> 
 
-## Authors
-
-* [Vivekkumar Patel]  - *(Developer)*
-* [Keyur Vaghani](https://github.com/KeyurVaghani) - *(Developer)*
-* [Manali Shah](https://github.com/Manalishah1) - *(Developer)*
-
-
 ## Features
 * User Profile Management
 * Tutor's Availability Management
@@ -83,6 +45,44 @@ availabilities and all requests, including accepted, rejected, and pending reque
 * Email Notification
 * Real Time Status Management
 * Searching based on S`kills
+
+
+## Authors
+
+* [Vivekkumar Patel]  - *(Developer)*
+* [Keyur Vaghani](https://github.com/KeyurVaghani) - *(Developer)*
+* [Manali Shah](https://github.com/Manalishah1) - *(Developer)*
+
+## Built With
+
+United Tutoring has been build with following technology stack.
+
+* [![HTML][HTML.com]][HTML-url]
+* [![CSS][CSS.com]][CSS-url]
+* [![Java script][javascript.com]][javascript-url]
+* [![Node][Node.com]][Node-url]
+* [![React][React.js]][React-url]
+* [![Express][Express.com]][Express-url]
+* [![Jwt][Jwt.com]][Jwt-url]
+* [![AWS][AWS.com]][AWS-url]
+* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
+
+##  AWS Cloud Services Used
+
+1. [AWS Cognito](https://aws.amazon.com/cognito/)
+2. [AWS Lambda](https://aws.amazon.com/lambda/)
+3. [AWS S3](https://aws.amazon.com/s3/)
+4. [AWS DynamoDB](https://aws.amazon.com/dynamodb/)
+5. [AWS EventBridge](https://aws.amazon.com/eventbridge/)
+6. [AWS API Gateway](https://aws.amazon.com/api-gateway/)
+7. [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/)
+8. [AWS Simple Notification Service](https://docs.aws.amazon.com/elastic-beanstalk/)
+9. [AWS Cloud Formation](https://aws.amazon.com/cloudformation/)
+
+##  Other API Used
+
+1. [Zoom API](https://devforum.zoom.us/t/help-understanding-how-to-create-meeting-using-backend/8496)
+2. [Moment js](https://momentjs.com/)
 
 ## Getting Started
 
@@ -112,20 +112,6 @@ To run this project on local follow the below steps:
 * Run 'npm run build' to build the app.
 * Run the app using 'npm start'.
 * Open browser and run http://localhost:8080/ to run the app in the browser.
-
-## Deployment
-
-This project is deployed on Heroku server. Follow below steps for deployment:
-
-1. Go to https://www.heroku.com/ and sign in with your account.
-2. Create a new app and give it a name.
-3. In your terminal, run 'heroku login'.
-4. After successful login, run 'heroku git:clone -a {APP_NAME}$ {APP_NAME}' where APP_NAME is the name provided in step 2.
-5. Run 'git add .' to add all the files.
-6. Run  'git commit -am MESSAGE' where MESSAGE is any string which can be used to identify the commit.
-7. Run 'git push heroku master' to push the code.
-8. Heroku will build the code after completion of push operation.
-9. Click on 'Open App' from the heroku website window to view the deployed app.
 
 ## Acknowledgments
 
