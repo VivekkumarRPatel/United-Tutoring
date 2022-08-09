@@ -15,20 +15,14 @@ import AWS from 'aws-sdk';
 import axios from 'axios';
 //import * as AWS from "@aws-sdk/client-sns";
 
-// const SESConfig = {
-//     apiVersion: "2010-12-01",
-//     accessKeyId: "AKIA4RE7FY6PYYZZQ6VQ",
-//     accessSecretKey:"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",
-//     region: "us-east-1"
-// }
 
 // AWS.config.update(SESConfig);
 
 
 const SESConfig = {
     apiVersion: "2010-12-01",
-    accessKeyId: "AKIA4RE7FY6PYYZZQ6VQ",
-    accessSecretKey: "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",
+    accessKeyId: "",
+    accessSecretKey: "",
     
 }
 
